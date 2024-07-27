@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>랜덤 이름 생성</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+        }
+
+        #nameContainer {
+            margin: 20px auto;
+            text-align: center;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-gap: 5px;
+            justify-items: center;
+        }
+
+        .name-group {
+            display: flex;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .name {
+            border: 1px solid #000;
+            padding: 12px;
+            transition: transform 0.2s ease-in-out;
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            width: 100px;
+        }
+
+        .selected {
+            background-color: yellow;
+        }
+    </style>
+</head>
+<body>
+    <div id="nameContainer">
+        <!-- 이름이 생성될 공간 -->
+    </div>
+
+    <script>
+        const names = [
+            "신가온", "김성윤", "김소정", "김시윤", "김담일", "김도연", "김도윤", "문승원", "박동현",
+            "박시우", "손지우", "신유림", "양석호", "윤수영", "이겸", "이시은", "이은서", "이주연", "이하람",
+            "정서윤", "조유진", "이주안", "황주하", "차정우", "하승연", "이한결", "박주하", "황하은",
+            "김정하", "황현준", "김이룸", "장인하", "하승우"
+        ];
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        function generateRandomNames() {
+            const shuffledNames = [...names];
+            shuffleArray(shuffledNames);
+
+            const nameContainer = document.getElementById('nameContainer');
+            nameContainer.innerHTML = ''; // 기존 이름 제거
+
+            for (let i = 0; i < shuffledNames.length; i += 2) {
+                const nameGroup = document.createElement('div');
+                nameGroup.className = 'name-group';
+
+                const div1 = document.createElement('div');
+                div1.className = 'name';
+                div1.textContent = shuffledNames[i];
+                nameGroup.appendChild(div1);
+
+                if (i + 1 < shuffledNames.length) {
+                    const div2 = document.createElement('div');
+                    div2.className = 'name';
+                    div2.textContent = shuffledNames[i + 1];
+                    nameGroup.appendChild(div2);
+                }
+
+                nameContainer.appendChild(nameGroup);
+            }
+        }
+
+        function swapElements(element1, element2) {
+            const parent = element1.parentNode;
+            const sibling = element1.nextSibling === element2 ? element1 : element1.nextSibling;
+
+            element2.parentNode.insertBefore(element1, element2);
+            parent.insertBefore(element2, sibling);
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            generateRandomNames();
+
+            const names = document.querySelectorAll('.name');
+            names.forEach(function(name) {
+                name.addEventListener('click', function() {
+                    const selected = document.querySelector('.selected');
+                    if (selected) {
+                        swapElements(selected, name);
+                        selected.classList.remove('selected');
+                    } else {
+                        name.classList.add('selected');
+                    }
+                });
+            });
+
+            const nameContainer = document.getElementById('nameContainer');
+            nameContainer.addEventListener('transitionend', function(event) {
+                if (event.propertyName === 'transform') {
+                    event.target.classList.remove('selected');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+  .circuit {
+    width: 200px;
+    height: 300px;
+    border: 2px solid black;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .metal-plate {
+    width: 100%;
+    height: 20px;
+    background-color: gray;
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+
+  .thin-line {
+    width: 2px;
+    height: 100px;
+    background-color: black;
+    position: absolute;
+    top: 20px;
+    left: calc(50% - 1px);
+  }
+
+  .metal-rod {
+    width: 20px;
+    height: 30px;
+    background-color: gray;
+    position: absolute;
+    top: 120px;
+    transition: transform 0.2s;
+  }
+
+  .metal-rod-left {
+    left: 50%;
+    width: 10px;
+    height: 50px;
+    transform: translateX(-100%);
+    transition: transform 0.2s;
+  }
+
+  .metal-rod-right {
+    left: 45%;
+    width: 10px;
+    height: 50px;
+    transform: translateX(100%);
+    transition: transform 0.2s;
+  }
+
+  .movable-bar {
+    width: 100px;
+    height: 10px;
+    background-color: black;
+    position: absolute;
+    top: 10px;
+    left: 250px;
+    cursor: move;
+    transition: top 0.2s, left 0.2s;
+    user-select: none; /* 텍스트 드래그 비활성화 */
+  }
+
+  .electron {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #FFD700;
+    position: absolute;
+    top: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 8px;
+    font-weight: bold;
+    transition: top 0.2s, left 0.2s;
+  }
+
+  .electron-1 {
+    left: 25%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .electron-2 {
+    left: 65%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .electron-3 {
+    left: 35%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .electron-4 {
+    left: 75%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+  }
+  .electron-5 {
+    left: 35%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+  }
+  
+  .electron-6 {
+    left: 75%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .metal-rod-left .electron-1 {
+    left: 50%;
+    top: 100%;
+    transform: translate(-50%, -100%);
+  }
+
+  .metal-rod-right .electron-2 {
+    left: 50%;
+    top: 100%;
+    transform: translate(-50%, -100%);
+  }
+
+  .metal-rod-right .electron-3 {
+    left: 50%;
+    top: 0;
+    transform: translate(-50%, -0%);
+  }
+
+  .metal-rod-right .electron-4 {
+    left: 50%;
+    top: 100%;
+    transform: translate(-50%, -100%);
+  }
+</style>
+</head>
+<body>
+  <div class="circuit">
+    <div class="metal-plate">
+      <div class="electron electron-1">-</div>
+      <div class="electron electron-2">-</div>
+      <div class="electron electron-3">+</div>
+      <div class="electron electron-4">+</div>
+    </div>
+    <div class="thin-line"></div>
+    <div class="metal-rod metal-rod-left"></div>
+    <div class="metal-rod metal-rod-right"></div>
+    <div class="movable-bar">
+      <div class="electron electron-5">-</div>
+      <div class="electron electron-6">-</div>
+    </div>
+  </div>
+
+  <script>
+    let isMouseDown = false;
+    let initialX = 0;
+    let initialY = 0;
+    let movableBar = document.querySelector('.movable-bar');
+    let metalRodLeft = document.querySelector('.metal-rod-left');
+    let metalRodRight = document.querySelector('.metal-rod-right');
+    let electron1 = document.querySelector('.electron-1');
+    let electron2 = document.querySelector('.electron-2');
+    let electron3 = document.querySelector('.electron-3');
+    let electron4 = document.querySelector('.electron-4');
+
+    function handleMouseDown(event) {
+      isMouseDown = true;
+      initialX = event.clientX - movableBar.offsetLeft;
+      initialY = event.clientY - movableBar.offsetTop;
+      movableBar.style.cursor = 'grabbing';
+      movableBar.style.cursor = '-webkit-grabbing';
+    }
+
+    function handleMouseUp() {
+      isMouseDown = false;
+      movableBar.style.cursor = 'move';
+    }
+
+    function handleMouseMove(event) {
+      if (isMouseDown) {
+        let newX = event.clientX - initialX;
+        let newY = event.clientY - initialY;
+
+        movableBar.style.left = newX + 'px';
+        movableBar.style.top = newY + 'px';
+
+        let metalPlate = document.querySelector('.metal-plate');
+        let plateRect = metalPlate.getBoundingClientRect();
+        let barRect = movableBar.getBoundingClientRect();
+        let distance = Math.abs(barRect.left + barRect.width / 2 - (plateRect.left + plateRect.width / 2));
+
+        if (distance < 100) {
+          electron1.style.transitionDuration = '0.2s';
+          electron2.style.transitionDuration = '0.2s';
+
+          let rotationAngle = (100 - distance) / 50 * 45;
+
+          metalRodRight.style.transform = `translateX(100%) translateX(${rotationAngle / 7}px) rotate(-${rotationAngle / 2}deg)`;
+          metalRodLeft.style.transform = `translateX(-100%) translateX(-${rotationAngle / 7}px) rotate(${rotationAngle / 2}deg)`;
+
+          metalRodRight.appendChild(electron1);
+          metalRodLeft.appendChild(electron2);
+        } else {
+          electron1.style.transitionDuration = '0s';
+          electron2.style.transitionDuration = '0s';
+
+          metalPlate.appendChild(electron1);
+          metalPlate.appendChild(electron2);
+
+          metalRodRight.style.transform = 'translateX(100%) rotate(0deg)';
+          metalRodLeft.style.transform = 'translateX(-100%) rotate(0deg)';
+        }
+      }
+    }
+
+    movableBar.addEventListener('mousedown', handleMouseDown);
+    movableBar.addEventListener('touchstart', function(event) {
+      event.preventDefault(); // Prevent default touch behavior (e.g., scrolling)
+      handleMouseDown(event.touches[0]);
+    });
+
+    document.addEventListener('mouseup', handleMouseUp);
+    document.addEventListener('touchend', handleMouseUp);
+
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('touchmove', function(event) {
+      event.preventDefault(); // Prevent default touch behavior (e.g., scrolling)
+      handleMouseMove(event.touches[0]);
+    });
+
+  </script>
+</body>
+</html>

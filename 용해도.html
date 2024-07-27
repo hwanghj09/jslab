@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>물이 들어있는 컵</title>
+    <style>
+        body {
+            background-color: lightgreen;
+        }
+        
+        .cup {
+            position: absolute;
+            background-color: rgb(189, 190, 190);
+            width: 400px;
+            height: 400px;
+            border-bottom-left-radius: 10%;
+            border-bottom-right-radius: 10%;
+            left: 1200px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            top: 400px;
+        }
+        
+        .water {
+            background-color: rgba(0, 0, 255, 0.7);
+            width: 250px;
+            height: 380px;
+            position: absolute;
+            bottom: 20px;
+            left: 70px;
+        }
+        
+        .chemical-name {
+            position: absolute;
+            font-size: 50px;
+            font-weight: bold;
+            color: white;
+        }
+        
+        .chemical {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background-color: floralwhite;
+            width: 100px;
+            height: 100px;
+            position: absolute;
+            top: 400px;
+            left: 1700px;
+            cursor: pointer;
+            user-select: none;
+            font-size: 20px;
+            text-align: center;
+        }
+        
+        .fire-container {
+            position: relative;
+            width: 300px;
+            height: 200px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        
+        .fire {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 500%;
+            background: linear-gradient(to top, #ff8000, #ffc000);
+            border-radius: 50% 50% 0 0;
+            animation: flame 1s ease-in-out infinite;
+            cursor: move;
+        }
+        
+        @keyframes flame {
+            0% {
+                height: 70%;
+            }
+            50% {
+                height: 65%;
+            }
+            100% {
+                height: 70%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="cup">
+        <div class="water">
+        </div>
+    </div>
+    <div class="fire-container" style="top: 750px; left: 1250px; position: absolute;">
+        <div class="fire"></div>
+    </div>
+    <select id="chemicalSelect" onchange="updateChemicalName()" style="top: 400px; left: 1800px; position: absolute;">
+        <option value="PotassiumNitrate">질산 칼륨</option>
+        <option value="SodiumNitrate">질산 나트륨</option>
+        <option value="CopperSulfate">황산 구리</option>
+        <option value="SodiumChloride">염화 나트륨</option>
+        <option value="PotassiumBisulfate">붕산</option>
+    </select>
+    <button id="toggleFireButton" style="top: 450px; left: 1800px; position: absolute;" onclick="igniteFire()">불 피우기</button>
+    <div class="chemical" id="chemicalElement" draggable="true">용질</div>
+    <input id="inputValue" type="number" placeholder="숫자를 입력하세요" style="top: 500px; left: 1800px; position: absolute;" />
+    <canvas id="solubilityChart" style="width: 700px; height: 700px;"></canvas>
+
+    <script>
+        var fireContainer = document.querySelector(".fire-container");
+        var precipitation = document.querySelector(".precipitation");
+        var waterTemperature = 20; // 초기 물의 온도
+        var inputValue = 0;
+        const chemical = document.getElementById("chemicalElement");
+        const water = document.querySelector(".water");
+        var chemicalsSolubility = {
+            PotassiumNitrate: {
+                temperatures: [0, 20, 40, 60, 80, 100, 120],
+                solubilities: [10, 13.3, 24.2, 36.2, 52.5, 74.4, 106]
+            },
+            SodiumNitrate: {
+                temperatures: [0, 20, 40, 60, 80, 100],
+                solubilities: [73.3, 80.4, 88.9, 98.8, 110.0, 122.4]
+            },
+            CopperSulfate: {
+                temperatures: [0, 20, 40, 60, 80, 100],
+                solubilities: [23.0, 23.7, 24.4, 25.1, 25.8, 26.5]
+            },
+            SodiumChloride: {
+                temperatures: [0, 20, 40, 60, 80, 100],
+                solubilities: [35.7, 35.8, 35.9, 36.0, 36.1, 36.2]
+            },
+            PotassiumBisulfate: {
+                temperatures: [0, 10, 20, 40, 60],
+                solubilities: [2.52, 4.72, 5.7, 19.10, 27.53]
+            }
+        };
+        var fireIsIgnited = false; // New variable to track the fire's state
+        function updateChemicalName() {
+            var selectElement = document.getElementById("chemicalSelect");
+            var chemicalName = selectElement.options[selectElement.selectedIndex].value;
+
+            drawSolubilityGraph(chemicalName);
+        }
+
+        let temperatureDecreaseInterval; // 변수를 추가하여 setInterval 함수를 저장합니다.
+
+        function igniteFire() {
+            if (fireIsIgnited) {
+                fireContainer.style.display = 'none'; // 불이 이미 켜져 있을 때, 불을 끕니다.
+                fireIsIgnited = false;
+                clearInterval(temperatureDecreaseInterval); // 불을 끈 후 Interval을 제거합니다.
+            } else {
+                fireContainer.style.display = 'block';
+                fireIsIgnited = true;
+                increaseTemperature(); // 온도를 증가시키는 함수 호출
+
+                // 불을 켠 후 5초가 지나면 물의 온도를 0.5초마다 1씩 낮추기 시작합니다.
+                setTimeout(() => {
+                    temperatureDecreaseInterval = setInterval(() => {
+                        if (waterTemperature > 0) {
+                            waterTemperature -= 1;
+                            updateGraphData();
+                            movePoint();
+                        } else {
+                            clearInterval(temperatureDecreaseInterval);
+                        }
+                    }, 500); // 0.5초(500ms)마다 실행됩니다.
+                }, 5000); // 5초 후 실행됩니다.
+            }
+        }
+
+        function increaseTemperature() {
+            if (!fireIsIgnited) {
+                return; // 불이 꺼진 상태일 때 함수를 종료
+            }
+
+            var interval = setInterval(function() {
+                if (waterTemperature >= 100 || !fireIsIgnited) {
+                    clearInterval(interval);
+                } else {
+                    waterTemperature += 1;
+                    updateGraphData();
+                    movePoint();
+                }
+            }, 500);
+        }
+
+        function checkContact() {
+            const chemicalRect = chemical.getBoundingClientRect();
+            const waterRect = water.getBoundingClientRect();
+            const input = document.getElementById('inputValue').value;
+            // Chemical과 Water가 겹치는지 확인합니다.
+            if (
+                chemicalRect.left < waterRect.right &&
+                chemicalRect.right > waterRect.left &&
+                chemicalRect.top < waterRect.bottom &&
+                chemicalRect.bottom > waterRect.top
+            ) {
+                // Chemical이 Water와 닿으면 updateGraphData 함수를 호출합니다.
+                inputValue = input;
+
+                // Chemical을 숨깁니다.
+                chemical.style.top = '500px';
+                chemical.style.left = '1800px';
+            }
+        }
+
+        // 마우스가 움직일 때마다 Chemical과 Water의 상호작용을 감지합니다.
+        document.addEventListener('mousemove', function() {
+            checkContact();
+        });
+
+        function drawSolubilityGraph(chemicalName) {
+            const ctx = document.getElementById('solubilityChart').getContext('2d');
+
+            if (window.myChart) {
+                window.myChart.destroy();
+            }
+
+            const selectedChemical = chemicalsSolubility[chemicalName];
+
+            window.myChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: selectedChemical.temperatures,
+                    datasets: [{
+                        label: `${chemicalName}의 용해도`,
+                        data: selectedChemical.solubilities,
+                        borderColor: 'rgba(75, 192, 192)',
+                        borderWidth: 1,
+                        fill: false
+                    }]
+                },
+                options: {
+                    responsive: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        x: {
+                            type: 'linear',
+                            position: 'bottom',
+                            title: {
+                                display: true,
+                                text: '온도 (°C)'
+                            }
+                        },
+                        y: {
+                            type: 'linear',
+                            title: {
+                                display: true,
+                                text: '용해도 (g/100g 물)'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+
+        function updateGraphData() {
+            if (window.myChart) {
+                for (let datasetIndex = 0; datasetIndex < window.myChart.data.datasets.length; datasetIndex++) {
+                    const dataset = window.myChart.data.datasets[datasetIndex];
+
+                    // 이전 점 데이터를 찾아 삭제
+                    if (dataset.data && dataset.data.length === 1) {
+                        window.myChart.data.datasets.splice(datasetIndex, 1);
+                    }
+                }
+                Object.keys(chemicalsSolubility).forEach(chemicalName => {
+                    window.myChart.data.datasets.push({
+                        data: [{
+                            x: waterTemperature,
+                            y: inputValue
+                        }],
+                        borderColor: 'red',
+                        backgroundColor: 'red',
+                        pointRadius: 5,
+                        pointHoverRadius: 7,
+                    });
+                });
+
+
+                window.myChart.update();
+            }
+        }
+
+        function movePoint() {
+            if (window.myChart && window.myChart.data.datasets.length > 0) {
+                window.myChart.data.datasets.forEach(dataset => {
+                    dataset.data[0].x = waterTemperature; // x 좌표를 온도에 맞게 변경
+                });
+                window.myChart.update();
+            }
+        }
+
+        let offsetX = 5;
+        let offsetY = 5;
+        let isDragging = false;
+
+        chemical.addEventListener('mousedown', function(e) {
+            isDragging = true;
+            offsetX = e.clientX - chemical.getBoundingClientRect().left;
+            offsetY = e.clientY - chemical.getBoundingClientRect().top;
+        });
+
+        document.addEventListener('mousemove', function(e) {
+            if (isDragging) {
+                chemical.style.left = e.clientX - offsetX + 'px';
+                chemical.style.top = e.clientY - offsetY + 'px';
+            }
+        });
+
+        document.addEventListener('mouseup', function() {
+            isDragging = false;
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</body>
+
+</html>
