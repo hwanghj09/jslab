@@ -44,22 +44,74 @@
         }
 
         .bulb {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background-color: #dddddd;
-            position: absolute;
-            transition: background-color 0.3s ease-in-out, transform 0.3s ease;
-        }
+    width: 60px;
+    height: 60px;
+    border-radius: 50% 50% 50% 50%;
+    background-color: #f0f0f0;
+    position: absolute;
+    transition: all 0.3s ease-in-out;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
 
-        .bulb:nth-child(1) { top: 125px; left: 30%; }
-        .bulb:nth-child(2) { top: 125px; left: 60%; }
+.bulb:nth-child(3) { top: 125px; left: 60%; }
 
-        .bulb.on {
-            background-color: yellow;
-            box-shadow: 0 0 20px yellow;
-            transform: scale(1.1);
-        }
+.bulb:before {
+    content: '';
+    position: absolute;
+    width: 80%;
+    height: 80%;
+    background: radial-gradient(ellipse at center, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0) 70%);
+    top: 10%;
+    left: 10%;
+    border-radius: 50%;
+}
+
+.filament {
+    width: 60%;
+    height: 60%;
+    border: 2px solid #999;
+    border-radius: 50%;
+    transition: all 0.3s ease-in-out;
+}
+
+.bulb.on {
+    background-color: #ffffa0;
+    box-shadow: 0 0 20px #ffffa0;
+}
+
+.bulb.on .filament {
+    border-color: #ff9900;
+    box-shadow: 0 0 15px #ff9900;
+}
+
+.wire {
+    position: absolute;
+    top: 150px;
+    left: 25%;
+    width: 50%;
+    height: 4px;
+    background-color: #555;
+    overflow: hidden;
+}
+
+.current {
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to right, transparent, #f8d01c, transparent);
+    animation: flow 2s linear infinite;
+    display: none;
+}
+
+@keyframes flow {
+    0% { left: -100%; }
+    100% { left: 100%; }
+}
 
         .controls {
             display: flex;
@@ -123,10 +175,13 @@
         <h1>직렬 연결된 전구 회로</h1>
         
         <div class="circuit">
-            <div class="wire"></div>
+            <div class="wire">
+                <div class="current"></div>
+            </div>
             <div class="cut"></div>
-            <div class="bulb" aria-label="전구 1"></div>
-            <div class="bulb" aria-label="전구 2"></div>
+            <div class="bulb" aria-label="전구 1">
+                <div class="filament"></div>
+            </div>
         </div>
 
         <div class="controls">
@@ -147,40 +202,37 @@
 
     <script>
         let bulbsOn = false;
-        let wireCut = false;
+let wireCut = false;
 
-        function toggleBulbs() {
-            const bulbs = document.querySelectorAll('.bulb');
-            const switchButton = document.getElementById('toggleSwitch');
+function toggleBulbs() {
+    const bulbs = document.querySelectorAll('.bulb');
+    const switchButton = document.getElementById('toggleSwitch');
+    const current = document.querySelector('.current');
 
-            if (!wireCut) {
-                bulbsOn = !bulbsOn;
-                bulbs.forEach(bulb => bulb.classList.toggle('on', bulbsOn));
-                switchButton.textContent = bulbsOn ? '전류 멈추기' : '전류 흐르게 하기';
-            }
-        }
+    if (!wireCut) {
+        bulbsOn = !bulbsOn;
+        bulbs.forEach(bulb => bulb.classList.toggle('on', bulbsOn));
+        switchButton.textContent = bulbsOn ? '전류 멈추기' : '전류 흐르게 하기';
+        current.style.display = bulbsOn ? 'block' : 'none';
+    }
+}
 
-        function cutWire() {
-            const cutWireButton = document.getElementById('cutWire');
-            const cut = document.querySelector('.cut');
-            const bulbs = document.querySelectorAll('.bulb');
+function cutWire() {
+    const cutWireButton = document.getElementById('cutWire');
+    const cut = document.querySelector('.cut');
+    const bulbs = document.querySelectorAll('.bulb');
+    const current = document.querySelector('.current');
 
-            wireCut = !wireCut;
-            cut.style.display = wireCut ? 'block' : 'none';
-            cutWireButton.textContent = wireCut ? '전선 이어주기' : '전선 자르기';
+    wireCut = !wireCut;
+    cut.style.display = wireCut ? 'block' : 'none';
+    cutWireButton.textContent = wireCut ? '전선 이어주기' : '전선 자르기';
 
-            if (wireCut) {
-                bulbs.forEach(bulb => bulb.classList.remove('on'));
-            }
-        }
-
-        function goToIndex() {
-            window.location.href = '전기회로.html';
-        }
-
-        function goToParallelCircuit() {
-            window.location.href = '전기회로-병.html';
-        }
+    if (wireCut) {
+        bulbs.forEach(bulb => bulb.classList.remove('on'));
+        current.style.display = 'none';
+        bulbsOn = false;
+    }
+}
     </script>
 </body>
 </html>
