@@ -4,159 +4,187 @@
 <head>
     <title>물이 들어있는 컵</title>
     <style>
+        /* Your existing CSS styles */
         body {
-    font-family: 'Arial', sans-serif;
-    background-color: #f0f8ff;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    margin: 0;
-}
+            font-family: 'Arial', sans-serif;
+            background-color: #f0f8ff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
 
-.container {
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    width: 90%;
-    max-width: 1200px;
-}
+        .container {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            width: 100%;
+            height: 25%;
+            max-width: 1200px;
+        }
 
-.left-panel, .right-panel {
-    background-color: white;
-    border-radius: 10px;
-    padding: 20px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
+        .right-panel {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            height: 100%;
+            width: 40%;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }   
 
-.cup {
-    background-color: #e0e0e0;
-    border: 2px solid #b0b0b0;
-}
+        .cup {
+            background-color: #e0e0e0;
+            border: 2px solid #b0b0b0;
+            position: relative;
+        }
 
-.water {
-    background-color: rgba(0, 119, 190, 0.7);
-}
+        .water {
+            background-color: rgba(0, 119, 190, 0.7);
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 50%; /* Initial height */
+            transition: height 0.5s ease;
+        }
 
-.chemical {
-    background-color: #ff9800;
-    color: white;
-    font-weight: bold;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    transition: all 0.3s ease;
-}
+        .chemical {
+            background-color: #ff9800;
+            color: white;
+            font-weight: bold;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
 
-.chemical:hover {
-    transform: scale(1.05);
-}
+        .chemical:hover {
+            transform: scale(1.05);
+        }
 
-select, input, button {
-    margin: 10px 0;
-    padding: 8px 12px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-    font-size: 14px;
-}
+        select, input, button {
+            margin: 10px 0;
+            padding: 8px 12px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            font-size: 14px;
+        }
 
-button {
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
 
-button:hover {
-    background-color: #45a049;
-}
+        button:hover {
+            background-color: #45a049;
+        }
 
-#solubilityChart {
-    margin-top: 20px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-}
+        #solubilityChart {
+            margin-top: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-left: 40px;
+            
+        }
 
-.fire-container {
-    margin-top: 20px;
-}
-.tutorial {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-}
+        .tutorial {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
 
-.tutorial-content {
-    background-color: white;
-    padding: 20px;
-    border-radius: 10px;
-    max-width: 500px;
-}
+        .tutorial-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 500px;
+        }
 
-.tutorial-content h2 {
-    margin-top: 0;
-}
+        .tutorial-content h2 {
+            margin-top: 0;
+        }
 
-.tutorial-content button {
-    margin-top: 10px;
-}
+        .tutorial-content button {
+            margin-top: 10px;
+        }
+
+        .tem-container {
+            width: 20%;
+        }
+
+        .back-button {
+            z-index: 999;
+            font-size: 18px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: transform 0.2s, background-color 0.2s, box-shadow 0.2s;
+        }
+        
+        .back-button:hover {
+            transform: scale(1.05);
+            background-color: #45a049;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
     </style>
 </head>
 
-<body><div id="tutorial" class="tutorial">
-    <div class="tutorial-content">
-        <h2>사용 방법</h2>
-        <ol>
-            <li>오른쪽 패널에서 용질을 선택하세요.</li>
-            <li>용질의 양(g)을 입력하세요.</li>
-            <li>'용질 추가' 버튼을 클릭하거나 왼쪽의 용질을 물컵으로 드래그하세요.</li>
-            <li>'불 피우기/끄기' 버튼으로 물의 온도를 조절할 수 있습니다.</li>
-            <li>그래프에서 용해도 변화를 관찰하세요.</li>
-        </ol>
-        <button onclick="closeTutorial()">확인</button>
-    </div>
-</div>
-    <div class="container">
-        <div class="left-panel">
-            <div class="cup">
-                <div class="water"></div>
-                <div id="temperature-display">20°C</div>
-            </div>
-            <div class="fire-container">
-                <div class="fire"></div>
-            </div>
-            <div class="chemical" id="chemicalElement" draggable="true">용질을 드래그하세요</div>
+<body>
+    <div id="tutorial" class="tutorial">
+        <div class="tutorial-content">
+            <h2>사용 방법</h2>
+            <ol>
+                <li>오른쪽 패널에서 용질을 선택하세요.</li>
+                <li>용질의 양(g)을 입력하세요.</li>
+                <li>'용질 추가' 버튼을 클릭하여 용질을 추가하세요.</li>
+                <li>'불 피우기/끄기' 버튼으로 물의 온도를 조절할 수 있습니다.</li>
+                <li>그래프에서 용해도 변화를 관찰하세요.</li>
+            </ol>
+            <button onclick="closeTutorial()">확인</button>
         </div>
+    </div>
+    <div class="container">
         <div class="right-panel">
             <label for="chemicalSelect">용질 선택:</label>
             <select id="chemicalSelect" onchange="updateChemicalName()">
                 <option value="PotassiumNitrate">질산 칼륨</option>
-        <option value="SodiumNitrate">질산 나트륨</option>
-        <option value="CopperSulfate">황산 구리</option>
-        <option value="SodiumChloride">염화 나트륨</option>
-        <option value="PotassiumBisulfate">붕산</option>
+                <option value="SodiumNitrate">질산 나트륨</option>
+                <option value="CopperSulfate">황산 구리</option>
+                <option value="SodiumChloride">염화 나트륨</option>
+                <option value="PotassiumBisulfate">붕산</option>
             </select>
-            <button id="toggleFireButton" onclick="igniteFire()">불 피우기/끄기</button>
+            <button id="fireButton" onclick="igniteFire()">불 피우기</button>
             <label for="inputValue">용질의 양 (g):</label>
             <input id="inputValue" type="number" placeholder="숫자를 입력하세요" />
             <button onclick="addChemical()">용질 추가</button>
-            <div id="feedback"></div>
-            <canvas id="solubilityChart"></canvas>
+            <div class="tem-container">
+                <div class="cup">
+                    <div id="temperature-display">20°C</div>
+                </div>
+            </div>
+            <button class="back-button" onclick="goToMain()">돌아가기</button>
         </div>
+        <canvas id="solubilityChart"></canvas>  
     </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-        var fireContainer = document.querySelector(".fire-container");
-        var precipitation = document.querySelector(".precipitation");
+        var fireButton = document.getElementById('fireButton');
         var waterTemperature = 20; // 초기 물의 온도
         var inputValue = 0;
-        const chemical = document.getElementById("chemicalElement");
-        const water = document.querySelector(".water");
+        var fireIsIgnited = false; // New variable to track the fire's state
+        let temperatureDecreaseInterval;
+
         var chemicalsSolubility = {
             PotassiumNitrate: {
                 temperatures: [0, 20, 40, 60, 80, 100, 120],
@@ -179,27 +207,25 @@ button:hover {
                 solubilities: [2.52, 4.72, 5.7, 19.10, 27.53]
             }
         };
-        var fireIsIgnited = false; // New variable to track the fire's state
+
         function updateChemicalName() {
             var selectElement = document.getElementById("chemicalSelect");
             var chemicalName = selectElement.options[selectElement.selectedIndex].value;
-
             drawSolubilityGraph(chemicalName);
         }
 
-        let temperatureDecreaseInterval; // 변수를 추가하여 setInterval 함수를 저장합니다.
-
         function igniteFire() {
             if (fireIsIgnited) {
-                fireContainer.style.display = 'none'; // 불이 이미 켜져 있을 때, 불을 끕니다.
+                fireButton.textContent = '불 피우기';
+                fireButton.style.backgroundColor = '#4CAF50';
                 fireIsIgnited = false;
-                clearInterval(temperatureDecreaseInterval); // 불을 끈 후 Interval을 제거합니다.
+                clearInterval(temperatureDecreaseInterval);
+                decreaseTemperature();
             } else {
-                fireContainer.style.display = 'block';
+                fireButton.textContent = '불 끄기';
+                fireButton.style.backgroundColor = '#FF5722';
                 fireIsIgnited = true;
-                increaseTemperature(); // 온도를 증가시키는 함수 호출
-
-                // 불을 켠 후 5초가 지나면 물의 온도를 0.5초마다 1씩 낮추기 시작합니다.
+                increaseTemperature();
                 setTimeout(() => {
                     temperatureDecreaseInterval = setInterval(() => {
                         if (waterTemperature > 0) {
@@ -209,16 +235,14 @@ button:hover {
                         } else {
                             clearInterval(temperatureDecreaseInterval);
                         }
-                    }, 500); // 0.5초(500ms)마다 실행됩니다.
-                }, 5000); // 5초 후 실행됩니다.
+                    }, 500);
+                }, 5000);
             }
+            updateTemperatureDisplay();
         }
 
         function increaseTemperature() {
-            if (!fireIsIgnited) {
-                return; // 불이 꺼진 상태일 때 함수를 종료
-            }
-
+            if (!fireIsIgnited) return;
             var interval = setInterval(function() {
                 if (waterTemperature >= 100 || !fireIsIgnited) {
                     clearInterval(interval);
@@ -227,33 +251,22 @@ button:hover {
                     updateGraphData();
                     movePoint();
                 }
+                updateTemperatureDisplay();
             }, 500);
         }
 
-        function checkContact() {
-            const chemicalRect = chemical.getBoundingClientRect();
-            const waterRect = water.getBoundingClientRect();
-            const input = document.getElementById('inputValue').value;
-            // Chemical과 Water가 겹치는지 확인합니다.
-            if (
-                chemicalRect.left < waterRect.right &&
-                chemicalRect.right > waterRect.left &&
-                chemicalRect.top < waterRect.bottom &&
-                chemicalRect.bottom > waterRect.top
-            ) {
-                // Chemical이 Water와 닿으면 updateGraphData 함수를 호출합니다.
-                inputValue = input;
-
-                // Chemical을 숨깁니다.
-                chemical.style.top = '500px';
-                chemical.style.left = '1800px';
-            }
+        function decreaseTemperature() {
+            var interval = setInterval(function() {
+                if (waterTemperature <= 20 || !fireIsIgnited) {
+                    clearInterval(interval);
+                } else {
+                    waterTemperature -= 1;
+                    updateGraphData();
+                    movePoint();
+                }
+                updateTemperatureDisplay();
+            }, 500);
         }
-
-        // 마우스가 움직일 때마다 Chemical과 Water의 상호작용을 감지합니다.
-        document.addEventListener('mousemove', function() {
-            checkContact();
-        });
 
         function drawSolubilityGraph(chemicalName) {
             const ctx = document.getElementById('solubilityChart').getContext('2d');
@@ -278,135 +291,89 @@ button:hover {
                 },
                 options: {
                     responsive: false,
+                    maintainAspectRatio: false,
                     plugins: {
                         legend: {
                             display: false
                         }
                     },
                     scales: {
+                        
                         x: {
                             type: 'linear',
                             position: 'bottom',
                             title: {
                                 display: true,
                                 text: '온도 (°C)'
-                            }
+                            },
+                            beginAtZero: true
                         },
                         y: {
                             type: 'linear',
                             title: {
                                 display: true,
                                 text: '용해도 (g/100g 물)'
-                            }
-                        }
-                    }
+                            },
+                            beginAtZero: true
+                        },
+                    },
                 }
             });
+            myChart.resize(600, 600);
         }
-
 
         function updateTemperatureDisplay() {
-    document.getElementById('temperature-display').textContent = `${waterTemperature}°C`;
-}
-
-function addChemical() {
-    const input = document.getElementById('inputValue').value;
-    if (input) {
-        inputValue = parseFloat(input);
-        updateGraphData();
-        movePoint();
-        document.getElementById('feedback').textContent = `${input}g의 용질이 추가되었습니다.`;
-    } else {
-        document.getElementById('feedback').textContent = '용질의 양을 입력해주세요.';
-    }
-}
-
-function igniteFire() {
-    if (fireIsIgnited) {
-        fireContainer.style.display = 'none';
-        fireIsIgnited = false;
-        clearInterval(temperatureDecreaseInterval);
-        document.getElementById('toggleFireButton').textContent = '불 피우기';
-    } else {
-        fireContainer.style.display = 'block';
-        fireIsIgnited = true;
-        increaseTemperature();
-        document.getElementById('toggleFireButton').textContent = '불 끄기';
-    }
-}
-
-function increaseTemperature() {
-    if (!fireIsIgnited) {
-        return;
-    }
-
-    var interval = setInterval(function() {
-        if (waterTemperature >= 100 || !fireIsIgnited) {
-            clearInterval(interval);
-        } else {
-            waterTemperature += 1;
-            updateGraphData();
-            movePoint();
-            updateTemperatureDisplay();
+            document.getElementById('temperature-display').textContent = `${waterTemperature}°C`;
+            document.querySelector('.water').style.height = `${waterTemperature}%`;
         }
-    }, 500);
-}
 
-// 드래그 앤 드롭 기능 개선
-chemical.addEventListener('dragstart', function(e) {
-    e.dataTransfer.setData('text/plain', e.target.id);
-});
+        function addChemical() {
+            const input = document.getElementById('inputValue').value;
+            if (input) {
+                inputValue = parseFloat(input);
+                updateGraphData();
+                movePoint();
+            }
+        }
 
-water.addEventListener('dragover', function(e) {
-    e.preventDefault();
-});
+        function updateGraphData() {
+            if (window.myChart) {
+                window.myChart.data.datasets[1] = {
+                    data: [{
+                        x: waterTemperature,
+                        y: inputValue
+                    }],
+                    borderColor: 'red',
+                    backgroundColor: 'red',
+                    pointRadius: 5,
+                    pointHoverRadius: 7,
+                };
+                window.myChart.update();
+            }
+        }
 
-water.addEventListener('drop', function(e) {
-    e.preventDefault();
-    var data = e.dataTransfer.getData('text');
-    if (data === 'chemicalElement') {
-        addChemical();
-        chemical.style.visibility = 'hidden';
-    }
-});
+        function movePoint() {
+            if (window.myChart && window.myChart.data.datasets.length > 0) {
+                window.myChart.data.datasets.forEach(dataset => {
+                    dataset.data[0].x = waterTemperature;
+                });
+                window.myChart.update();
+                updateTemperatureDisplay();
+            }
+        }
 
-function updateGraphData() {
-    if (window.myChart) {
-        window.myChart.data.datasets[1] = {
-            data: [{
-                x: waterTemperature,
-                y: inputValue
-            }],
-            borderColor: 'red',
-            backgroundColor: 'red',
-            pointRadius: 5,
-            pointHoverRadius: 7,
-        };
-        window.myChart.update();
-    }
-}
-
-// movePoint 함수 수정
-function movePoint() {
-    if (window.myChart && window.myChart.data.datasets.length > 0) {
-        window.myChart.data.datasets.forEach(dataset => {
-            dataset.data[0].x = waterTemperature;
+        document.addEventListener('DOMContentLoaded', function() {
+            drawSolubilityGraph('PotassiumNitrate');
         });
-        window.myChart.update();
-        updateTemperatureDisplay();
-    }
-}
-document.addEventListener('DOMContentLoaded', function() {
-    // 기존의 초기화 코드들...
-    
-    // 초기 그래프 그리기
-    drawSolubilityGraph('PotassiumNitrate');
-});
-function closeTutorial() {
-    document.getElementById('tutorial').style.display = 'none';
-}
+
+        function closeTutorial() {
+            document.getElementById('tutorial').style.display = 'none';
+        }
+
+        function goToMain() {
+            window.location.href = 'index.html';
+        }
     </script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </body>
 
 </html>
