@@ -42,15 +42,6 @@
             background-size: cover;
         }
 
-        .orbit {
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 50%;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-        }
-
         @keyframes orbit {
             from { transform: rotate(0deg) translateX(var(--orbit-radius)) rotate(0deg); }
             to   { transform: rotate(360deg) translateX(var(--orbit-radius)) rotate(-360deg); }
@@ -103,21 +94,13 @@
 <body>
     <div class="solar-system">
         <div class="sun" data-planet="sun"></div>
-        <div class="orbit" style="width: 240px; height: 240px;"></div>
         <div class="planet mercury" data-planet="mercury"></div>
-        <div class="orbit" style="width: 320px; height: 320px;"></div>
         <div class="planet venus" data-planet="venus"></div>
-        <div class="orbit" style="width: 400px; height: 400px;"></div>
         <div class="planet earth" data-planet="earth"></div>
-        <div class="orbit" style="width: 520px; height: 520px;"></div>
         <div class="planet mars" data-planet="mars"></div>
-        <div class="orbit" style="width: 800px; height: 800px;"></div>
         <div class="planet jupiter" data-planet="jupiter"></div>
-        <div class="orbit" style="width: 1200px; height: 1200px;"></div>
         <div class="planet saturn" data-planet="saturn"></div>
-        <div class="orbit" style="width: 1600px; height: 1600px;"></div>
         <div class="planet uranus" data-planet="uranus"></div>
-        <div class="orbit" style="width: 2000px; height: 2000px;"></div>
         <div class="planet neptune" data-planet="neptune"></div>
     </div>
     <div class="stars"></div>
