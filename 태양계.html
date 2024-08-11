@@ -11,6 +11,7 @@
             background: #000;
             font-family: 'Roboto', sans-serif;
             color: white;
+            user-select: none; /* 드래그 시 텍스트 선택 방지 */
         }
 
         .solar-system {
@@ -18,6 +19,8 @@
             height: 100vh;
             position: relative;
             overflow: hidden;
+            transform-origin: top left;
+            transition: transform 0.2s ease; /* 이동 시 부드럽게 전환 */
         }
 
         .sun, .planet {
@@ -47,14 +50,14 @@
             to   { transform: rotate(360deg) translateX(var(--orbit-radius)) rotate(-360deg); }
         }
 
-        .mercury { --size: 14px; --orbit-radius: 107.5px; --orbit-period: 88s; background-image: url('image/수성.png'); z-index: 10; --height: 14px}
-        .venus { --size: 18px; --orbit-radius: 144.5px; --orbit-period: 225s; background-image: url('image/금성.png'); z-index: 10; --height: 18px}
-        .earth { --size: 20px; --orbit-radius: 185.5px; --orbit-period: 365s; background-image: url('image/지구.png'); z-index: 10; --height: 20px}
-        .mars { --size: 16px; --orbit-radius: 245.5px; --orbit-period: 687s; background-image: url('image/화성.png'); z-index: 10; --height: 16px}
-        .jupiter { --size: 50px; --orbit-radius: 370px; --orbit-period: 4333s; background-image: url('image/목성.png'); z-index: 10; --height: 50px}
-        .saturn { --size: 44px; --orbit-radius: 575px; --orbit-period: 10759s; background-image: url('image/토성.png');z-index: 10; --height: 34px}
-        .uranus { --size: 34px; --orbit-radius: 780px; --orbit-period: 30687s; background-image: url('image/천왕성.png'); z-index: 10; --height: 48px}
-        .neptune { --size: 32px; --orbit-radius: 980px; --orbit-period: 60190s; background-image: url('image/해왕성.png');z-index: 10; --height: 32px}
+        .mercury { --size: 14px; --orbit-radius: 80px; --orbit-period: 88s; background-image: url('image/수성.png'); z-index: 10; --height: 14px }
+        .venus { --size: 18px; --orbit-radius: 110px; --orbit-period: 225s; background-image: url('image/금성.png'); z-index: 10; --height: 18px }
+        .earth { --size: 20px; --orbit-radius: 140px; --orbit-period: 365s; background-image: url('image/지구.png'); z-index: 10; --height: 20px }
+        .mars { --size: 16px; --orbit-radius: 180px; --orbit-period: 687s; background-image: url('image/화성.png'); z-index: 10; --height: 16px }
+        .jupiter { --size: 50px; --orbit-radius: 280px; --orbit-period: 4333s; background-image: url('image/목성.png'); z-index: 10; --height: 50px }
+        .saturn { --size: 44px; --orbit-radius: 400px; --orbit-period: 10759s; background-image: url('image/토성.png'); z-index: 10; --height: 34px }
+        .uranus { --size: 30px; --orbit-radius: 500px; --orbit-period: 30687s; background-image: url('image/천왕성.png'); z-index: 10; --height: 30px } /* 크기 축소 */
+        .neptune { --size: 28px; --orbit-radius: 620px; --orbit-period: 60190s; background-image: url('image/해왕성.png'); z-index: 10; --height: 28px } /* 크기 축소 */
 
         .planet {
             width: var(--size);
@@ -79,16 +82,15 @@
         }
 
         .planet-info {
-    position: fixed;
-    bottom: 20px;
-    left: 20px;
-    background: rgba(0, 0, 0, 0.7);
-    padding: 10px;
-    border-radius: 5px;
-    display: none;
-    z-index: 20; /* 추가: 다른 요소들보다 위에 위치하도록 설정 */
-}
-
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 10px;
+            border-radius: 5px;
+            display: none;
+            z-index: 20; /* 다른 요소들보다 위에 위치하도록 설정 */
+        }
     </style>
 </head>
 <body>
@@ -107,48 +109,83 @@
     <div class="planet-info"></div>
 
     <script>
+        // 별 생성
         const starsContainer = document.querySelector('.stars');
-for (let i = 0; i < 200; i++) {
-    const star = document.createElement('div');
-    star.classList.add('star');
-    star.style.width = star.style.height = Math.random() * 2 + 'px';
-    star.style.left = Math.random() * 100 + '%';
-    star.style.top = Math.random() * 100 + '%';
-    starsContainer.appendChild(star);
-}
+        for (let i = 0; i < 200; i++) {
+            const star = document.createElement('div');
+            star.classList.add('star');
+            star.style.width = star.style.height = Math.random() * 2 + 'px';
+            star.style.left = Math.random() * 100 + '%';
+            star.style.top = Math.random() * 100 + '%';
+            starsContainer.appendChild(star);
+        }
 
-const planets = document.querySelectorAll('.planet, .sun');
-const planetInfo = document.querySelector('.planet-info');
-const planetData = {
-    sun: { name: "태양", description: "태양계의 중심별로, 모든 행성에 중력과 에너지를 제공합니다." },
-    mercury: { name: "수성", description: "태양과 가장 가까운 행성으로, 표면 온도 변화가 극심합니다." },
-    venus: { name: "금성", description: "태양계에서 가장 뜨거운 행성으로, 두꺼운 대기로 인한 온실효과가 있습니다." },
-    earth: { name: "지구", description: "생명체가 알려진 유일한 행성으로, 액체 상태의 물이 존재합니다." },
-    mars: { name: "화성", description: "'붉은 행성'으로 알려져 있으며, 과거에 물이 흘렀던 흔적이 있습니다." },
-    jupiter: { name: "목성", description: "태양계에서 가장 큰 행성으로, 거대한 가스 행성입니다." },
-    saturn: { name: "토성", description: "아름다운 고리로 유명한 가스 행성입니다." },
-    uranus: { name: "천왕성", description: "옆으로 누워 공전하는 특이한 행성으로, 얼음 거인입니다." },
-    neptune: { name: "해왕성", description: "태양계의 가장 바깥쪽 행성으로, 강한 바람이 불고 있습니다." }
-};
+        // 행성 정보 및 이동 기능
+        const planets = document.querySelectorAll('.planet, .sun');
+        const planetInfo = document.querySelector('.planet-info');
+        const solarSystem = document.querySelector('.solar-system');
+        const planetData = {
+            sun: { name: "태양", description: "태양계의 중심별로, 모든 행성에 중력과 에너지를 제공합니다." },
+            mercury: { name: "수성", description: "태양과 가장 가까운 행성으로, 표면 온도 변화가 극심합니다." },
+            venus: { name: "금성", description: "태양계에서 가장 뜨거운 행성으로, 두꺼운 대기로 인한 온실효과가 있습니다." },
+            earth: { name: "지구", description: "생명체가 알려진 유일한 행성으로, 액체 상태의 물이 존재합니다." },
+            mars: { name: "화성", description: "'붉은 행성'으로 알려져 있으며, 과거에 물이 흘렀던 흔적이 있습니다." },
+            jupiter: { name: "목성", description: "태양계에서 가장 큰 행성으로, 거대한 가스 행성입니다." },
+            saturn: { name: "토성", description: "아름다운 고리로 유명한 가스 행성입니다." },
+            uranus: { name: "천왕성", description: "옆으로 누워 공전하는 특이한 행성으로, 얼음 거인입니다." },
+            neptune: { name: "해왕성", description: "태양계의 가장 바깥쪽 행성으로, 강한 바람이 불고 있습니다." }
+        };
 
-planets.forEach(planet => {
-    planet.addEventListener('click', () => {
-        const planetName = planet.dataset.planet;
-        const data = planetData[planetName];
-        planetInfo.innerHTML = `<h3>${data.name}</h3><p>${data.description}</p>`;
-        planetInfo.style.display = 'block';
+        let isDragging = false;
+        let startX, startY, initialTransformX, initialTransformY;
 
-        // 행성 확대
-        planet.style.transform = 'scale(1.5) translate(-33%, -33%)';
-        planet.style.zIndex = '15'; // 행성이 정보 위에 나타나지 않도록 설정
+        function onMouseDown(event) {
+            isDragging = true;
+            startX = event.clientX;
+            startY = event.clientY;
+            const transform = getComputedStyle(solarSystem).transform;
+            const matrix = new DOMMatrix(transform);
+            initialTransformX = matrix.m41;
+            initialTransformY = matrix.m42;
+            document.addEventListener('mousemove', onMouseMove);
+            document.addEventListener('mouseup', onMouseUp);
+        }
 
-        setTimeout(() => {
-            planet.style.transform = 'translate(-50%, -50%)';
-            planet.style.zIndex = ''; // 원래 z-index로 복원
-        }, 2000);
-    });
-});
+        function onMouseMove(event) {
+            if (isDragging) {
+                const dx = event.clientX - startX;
+                const dy = event.clientY - startY;
+                solarSystem.style.transform = `translate(${initialTransformX + dx}px, ${initialTransformY + dy}px)`;
+            }
+        }
 
+        function onMouseUp() {
+            isDragging = false;
+            document.removeEventListener('mousemove', onMouseMove);
+            document.removeEventListener('mouseup', onMouseUp);
+        }
+
+        // 행성 클릭 시 정보 표시 및 확대
+        planets.forEach(planet => {
+            planet.addEventListener('click', () => {
+                const planetName = planet.dataset.planet;
+                const data = planetData[planetName];
+                planetInfo.innerHTML = `<h3>${data.name}</h3><p>${data.description}</p>`;
+                planetInfo.style.display = 'block';
+
+                // 행성 확대
+                planet.style.transform = 'scale(1.5) translate(-33%, -33%)';
+                planet.style.zIndex = '15'; // 행성이 정보 위에 나타나지 않도록 설정
+
+                setTimeout(() => {
+                    planet.style.transform = 'translate(-50%, -50%)';
+                    planet.style.zIndex = ''; // 원래 z-index로 복원
+                }, 2000);
+            });
+        });
+
+        // 화면 드래그 시작
+        document.addEventListener('mousedown', onMouseDown);
     </script>
 </body>
 </html>
