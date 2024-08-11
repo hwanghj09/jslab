@@ -173,8 +173,10 @@
             </div>
             <button class="back-button" onclick="goToMain()">돌아가기</button>
         </div>
-        <canvas id="solubilityChart"></canvas>  
-        <div id="differenceDisplay">용해도 차이: 0</div>
+        <div>
+            <canvas id="solubilityChart"></canvas>
+            <div id="differenceDisplay">용해도 차이: 0</div>
+        </div>
     </div>
     
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -186,27 +188,27 @@
         let temperatureDecreaseInterval;
 
         var chemicalsSolubility = {
-    PotassiumNitrate: {
-        temperatures: [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120],
-        solubilities: [10, 11.6, 13.3, 18.8, 24.2, 30.2, 36.2, 44.3, 52.5, 61.4, 74.4, 90.4, 106]
-    },
-    SodiumNitrate: {
-        temperatures: [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100],
-        solubilities: [73.3, 76.9, 80.4, 84.7, 88.9, 93.8, 98.8, 104.4, 110.0, 115.9, 122.4]
-    },
-    CopperSulfate: {
-        temperatures: [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100],
-        solubilities: [23.0, 23.3, 23.7, 24.0, 24.4, 24.7, 25.1, 25.4, 25.8, 26.1, 26.5]
-    },
-    SodiumChloride: {
-        temperatures: [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100],
-        solubilities: [35.7, 35.8, 35.9, 36.0, 36.1, 36.1, 36.2, 36.2, 36.2, 36.2, 36.2]
-    },
-    PotassiumBisulfate: {
-        temperatures: [0, 10, 20, 30, 40, 50, 60],
-        solubilities: [2.52, 4.72, 5.7, 12.2, 19.10, 23.7, 27.53]
-    }
-};
+            PotassiumNitrate: {
+                temperatures: [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120],
+                solubilities: [10, 11.6, 13.3, 18.8, 24.2, 30.2, 36.2, 44.3, 52.5, 61.4, 74.4, 90.4, 106]
+            },
+            SodiumNitrate: {
+                temperatures: [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100],
+                solubilities: [73.3, 76.9, 80.4, 84.7, 88.9, 93.8, 98.8, 104.4, 110.0, 115.9, 122.4]
+            },
+            CopperSulfate: {
+                temperatures: [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100],
+                solubilities: [23.0, 23.3, 23.7, 24.0, 24.4, 24.7, 25.1, 25.4, 25.8, 26.1, 26.5]
+            },
+            SodiumChloride: {
+                temperatures: [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100],
+                solubilities: [35.7, 35.8, 35.9, 36.0, 36.1, 36.1, 36.2, 36.2, 36.2, 36.2, 36.2]
+            },
+            PotassiumBisulfate: {
+                temperatures: [0, 10, 20, 30, 40, 50, 60],
+                solubilities: [2.52, 4.72, 5.7, 12.2, 19.10, 23.7, 27.53]
+            }
+        };
 
         function updateChemicalName() {
             var selectElement = document.getElementById("chemicalSelect");
@@ -352,8 +354,6 @@
             }
         }
 
-
-
         function movePoint() {
             if (window.myChart && window.myChart.data.datasets.length > 0) {
                 window.myChart.data.datasets.forEach(dataset => {
@@ -365,38 +365,35 @@
         }
 
         function calculateDifference() {
-    if (!window.myChart) return;
-    const pointX = window.myChart.data.datasets[1].data[0].x;
-    const selectedChemical = chemicalsSolubility[document.getElementById('chemicalSelect').value];
-    const temperatures = selectedChemical.temperatures;
-    const solubilities = selectedChemical.solubilities;
-    const junPointWhere = Math.floor(pointX / 10) * 10;
-    const appPointWhere = Math.ceil(pointX / 10) * 10;
-    const junPointIndex = temperatures.indexOf(junPointWhere);
-    const appPointIndex = temperatures.indexOf(appPointWhere);
-    const junPointSolubility = junPointIndex !== -1 ? solubilities[junPointIndex] : null;
-    const appPointSolubility = appPointIndex !== -1 ? solubilities[appPointIndex] : null;
-    
-    if (junPointSolubility === null || appPointSolubility === null) {
-        console.log('용해도 값을 찾을 수 없습니다.');
-        return;
-    }
+            if (!window.myChart) return;
+            const pointX = window.myChart.data.datasets[1].data[0].x;
+            const selectedChemical = chemicalsSolubility[document.getElementById('chemicalSelect').value];
+            const temperatures = selectedChemical.temperatures;
+            const solubilities = selectedChemical.solubilities;
+            const junPointWhere = Math.floor(pointX / 10) * 10;
+            const appPointWhere = Math.ceil(pointX / 10) * 10;
+            const junPointIndex = temperatures.indexOf(junPointWhere);
+            const appPointIndex = temperatures.indexOf(appPointWhere);
+            const junPointSolubility = junPointIndex !== -1 ? solubilities[junPointIndex] : null;
+            const appPointSolubility = appPointIndex !== -1 ? solubilities[appPointIndex] : null;
+            
+            if (junPointSolubility === null || appPointSolubility === null) {
+                console.log('용해도 값을 찾을 수 없습니다.');
+                return;
+            }
 
-    // 기울기 계산
-    const slope = (appPointSolubility - junPointSolubility) / (appPointWhere - junPointWhere);
+            // 기울기 계산
+            const slope = (appPointSolubility - junPointSolubility) / (appPointWhere - junPointWhere);
 
-    // 점의 x좌표와 내림한 좌표의 차이를 곱해 용해도 차이 계산
-    const solubilityDifference = junPointSolubility + (pointX - junPointWhere) * slope;
+            // 점의 x좌표와 내림한 좌표의 차이를 곱해 용해도 차이 계산
+            const solubilityDifference = junPointSolubility + (pointX - junPointWhere) * slope;
 
-    if(junPointWhere==appPointWhere)
-    {
-        document.getElementById('differenceDisplay').textContent = `용해도 차이: ${junPointWhere} g/100g 물`;
-    }
-    else{
-        document.getElementById('differenceDisplay').textContent = `용해도 차이: ${solubilityDifference.toFixed(2)} g/100g 물`;
-    }
-    
-}
+            if(junPointWhere == appPointWhere) {
+                document.getElementById('differenceDisplay').textContent = `용해도 차이: ${junPointWhere} g/100g 물`;
+            } else {
+                document.getElementById('differenceDisplay').textContent = `용해도 차이: ${solubilityDifference.toFixed(2)} g/100g 물`;
+            }
+        }
 
         document.addEventListener('DOMContentLoaded', function() {
             drawSolubilityGraph('PotassiumNitrate');
