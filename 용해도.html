@@ -4,7 +4,6 @@
 <head>
     <title>물이 들어있는 컵</title>
     <style>
-        /* Your existing CSS styles */
         body {
             font-family: 'Arial', sans-serif;
             background-color: #f0f8ff;
@@ -20,7 +19,7 @@
             justify-content: space-around;
             align-items: center;
             width: 100%;
-            height: 25%;
+            height: 35%;
             max-width: 1200px;
         }
 
@@ -44,7 +43,7 @@
             position: absolute;
             bottom: 0;
             width: 100%;
-            height: 50%; /* Initial height */
+            height: 50%;
             transition: height 0.5s ease;
         }
 
@@ -144,9 +143,9 @@
             <h2>사용 방법</h2>
             <ol>
                 <li>오른쪽 패널에서 용질을 선택하세요.</li>
+                <li>온도(°C)를 입력하고 '온도 변경' 버튼을 클릭하세요.</li>
                 <li>용질의 양(g)을 입력하세요.</li>
                 <li>'용질 추가' 버튼을 클릭하여 용질을 추가하세요.</li>
-                <li>'불 피우기/끄기' 버튼으로 물의 온도를 조절할 수 있습니다.</li>
                 <li>그래프에서 용해도 변화를 관찰하세요.</li>
             </ol>
             <button onclick="closeTutorial()">확인</button>
@@ -162,7 +161,9 @@
                 <option value="SodiumChloride">염화 나트륨</option>
                 <option value="PotassiumBisulfate">붕산</option>
             </select>
-            <button id="fireButton" onclick="igniteFire()">불 피우기</button>
+            <br><label for="temperatureInput">온도 (°C):</label>
+            <input id="temperatureInput" type="number" min="0" max="100" value="20" />
+            <button onclick="updateTemperature()">온도 변경</button>
             <br><label for="inputValue">용질의 양 (g):</label>
             <input id="inputValue" type="number" placeholder="숫자를 입력하세요" />
             <button onclick="addChemical()">용질 추가</button>
@@ -181,11 +182,8 @@
     
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-        var fireButton = document.getElementById('fireButton');
         var waterTemperature = 20; // 초기 물의 온도
         var inputValue = 0;
-        var fireIsIgnited = false; // New variable to track the fire's state
-        let temperatureDecreaseInterval;
 
         var chemicalsSolubility = {
             PotassiumNitrate: {
@@ -216,58 +214,17 @@
             drawSolubilityGraph(chemicalName);
         }
 
-        function igniteFire() {
-            if (fireIsIgnited) {
-                fireButton.textContent = '불 피우기';
-                fireButton.style.backgroundColor = '#4CAF50';
-                fireIsIgnited = false;
-                clearInterval(temperatureDecreaseInterval);
-                decreaseTemperature();
+        function updateTemperature() {
+            const tempInput = document.getElementById('temperatureInput');
+            const newTemp = parseFloat(tempInput.value);
+            if (!isNaN(newTemp) && newTemp >= 0 && newTemp <= 100) {
+                waterTemperature = newTemp;
+                updateTemperatureDisplay();
+                updateGraphData();
+                movePoint();
             } else {
-                fireButton.textContent = '불 끄기';
-                fireButton.style.backgroundColor = '#FF5722';
-                fireIsIgnited = true;
-                increaseTemperature();
-                setTimeout(() => {
-                    temperatureDecreaseInterval = setInterval(() => {
-                        if (waterTemperature > 0) {
-                            waterTemperature -= 1;
-                            updateGraphData();
-                            movePoint();
-                        } else {
-                            clearInterval(temperatureDecreaseInterval);
-                        }
-                    }, 500);
-                }, 5000);
+                alert("올바른 온도를 입력해주세요 (0°C ~ 100°C)");
             }
-            updateTemperatureDisplay();
-        }
-
-        function increaseTemperature() {
-            if (!fireIsIgnited) return;
-            var interval = setInterval(function() {
-                if (waterTemperature >= 100 || !fireIsIgnited) {
-                    clearInterval(interval);
-                } else {
-                    waterTemperature += 1;
-                    updateGraphData();
-                    movePoint();
-                }
-                updateTemperatureDisplay();
-            }, 500);
-        }
-
-        function decreaseTemperature() {
-            var interval = setInterval(function() {
-                if (waterTemperature <= 20 || !fireIsIgnited) {
-                    clearInterval(interval);
-                } else {
-                    waterTemperature -= 1;
-                    updateGraphData();
-                    movePoint();
-                }
-                updateTemperatureDisplay();
-            }, 500);
         }
 
         function drawSolubilityGraph(chemicalName) {
@@ -294,6 +251,9 @@
                 options: {
                     responsive: false,
                     maintainAspectRatio: false,
+                    animation: {
+                        duration: 0
+                    },
                     plugins: {
                         legend: {
                             display: false
@@ -349,7 +309,7 @@
                     pointHoverRadius: 7
                 };
 
-                window.myChart.update();
+                window.myChart.update('none');
                 calculateDifference();
             }
         }
@@ -359,7 +319,7 @@
                 window.myChart.data.datasets.forEach(dataset => {
                     dataset.data[0].x = waterTemperature;
                 });
-                window.myChart.update();
+                window.myChart.update('none');
                 updateTemperatureDisplay();
             }
         }
@@ -382,16 +342,24 @@
                 return;
             }
 
-            // 기울기 계산
             const slope = (appPointSolubility - junPointSolubility) / (appPointWhere - junPointWhere);
-
-            // 점의 x좌표와 내림한 좌표의 차이를 곱해 용해도 차이 계산
             const solubilityDifference = junPointSolubility + (pointX - junPointWhere) * slope;
-
+            let test = 0;
+            if(solubilityDifference)
+            {
+                test=window.myChart.data.datasets[1].data[0].y-solubilityDifference;
+            }
+            else{
+                test=window.myChart.data.datasets[1].data[0].y-junPointSolubility;
+            }
+            if(test<0)
+            {
+                test*=-1;
+            }
             if(junPointWhere == appPointWhere) {
-                document.getElementById('differenceDisplay').textContent = `용해도 차이: ${junPointWhere} g/100g 물`;
+                document.getElementById('differenceDisplay').textContent = `용해도 차이: ${test.toFixed(2)} g/100g 물`;
             } else {
-                document.getElementById('differenceDisplay').textContent = `용해도 차이: ${solubilityDifference.toFixed(2)} g/100g 물`;
+                document.getElementById('differenceDisplay').textContent = `용해도 차이: ${test.toFixed(2)} g/100g 물`;
             }
         }
 
