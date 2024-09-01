@@ -52,14 +52,14 @@
             to   { transform: rotate(360deg) translateX(var(--orbit-radius)) rotate(-360deg); }
         }
 
-        .mercury { --size: 14px; --orbit-radius: 80px; --orbit-period: 88s; background-image: url('image/수성.png'); z-index: 10; --height: 14px }
-        .venus { --size: 18px; --orbit-radius: 110px; --orbit-period: 225s; background-image: url('image/금성.png'); z-index: 10; --height: 18px }
-        .earth { --size: 20px; --orbit-radius: 140px; --orbit-period: 365s; background-image: url('image/지구.png'); z-index: 10; --height: 20px }
-        .mars { --size: 16px; --orbit-radius: 180px; --orbit-period: 687s; background-image: url('image/화성.png'); z-index: 10; --height: 16px }
-        .jupiter { --size: 50px; --orbit-radius: 280px; --orbit-period: 4333s; background-image: url('image/목성.png'); z-index: 10; --height: 50px }
-        .saturn { --size: 44px; --orbit-radius: 400px; --orbit-period: 10759s; background-image: url('image/토성.png'); z-index: 10; --height: 34px }
-        .uranus { --size: 30px; --orbit-radius: 500px; --orbit-period: 30687s; background-image: url('image/천왕성.png'); z-index: 10; --height: 30px } /* 크기 축소 */
-        .neptune { --size: 28px; --orbit-radius: 620px; --orbit-period: 60190s; background-image: url('image/해왕성.png'); z-index: 10; --height: 28px } /* 크기 축소 */
+        .mercury { --size: 14px; --orbit-radius: 80px; --orbit-period: 88s; background-image: url('../image/수성.png'); z-index: 10; --height: 14px }
+        .venus { --size: 18px; --orbit-radius: 110px; --orbit-period: 225s; background-image: url('../image/금성.png'); z-index: 10; --height: 18px }
+        .earth { --size: 20px; --orbit-radius: 140px; --orbit-period: 365s; background-image: url('../image/지구.png'); z-index: 10; --height: 20px }
+        .mars { --size: 16px; --orbit-radius: 180px; --orbit-period: 687s; background-image: url('../image/화성.png'); z-index: 10; --height: 16px }
+        .jupiter { --size: 50px; --orbit-radius: 280px; --orbit-period: 4333s; background-image: url('../image/목성.png'); z-index: 10; --height: 50px }
+        .saturn { --size: 44px; --orbit-radius: 400px; --orbit-period: 10759s; background-image: url('../image/토성.png'); z-index: 10; --height: 34px }
+        .uranus { --size: 30px; --orbit-radius: 500px; --orbit-period: 30687s; background-image: url('../image/천왕성.png'); z-index: 10; --height: 30px } /* 크기 축소 */
+        .neptune { --size: 28px; --orbit-radius: 620px; --orbit-period: 60190s; background-image: url('../image/해왕성.png'); z-index: 10; --height: 28px } /* 크기 축소 */
 
         .planet {
             width: var(--size);
@@ -105,9 +105,120 @@
             border-radius: 5px;
             text-decoration: none;
         }
+        .comment-section {
+            position: fixed;
+            top: 0;
+            left: -400px;
+            width: 350px;
+            height: 100%;
+            background-color: #f8f8f8;
+            box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
+            transition: left 0.3s ease-in-out;
+            z-index: 10000;
+            display: flex;
+            flex-direction: column;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        .comment-section.open {
+            left: 0;
+        }
+
+        .comment-header {
+            padding: 10px;
+            color: #000000;
+            font-size: 20px;
+            font-weight: 20;
+            text-align: center;
+
+        }
+
+        .comment-body {
+            padding: 10px;
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+
+        .comment {
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+
+        .comment p {
+            margin: 0 0 10px 0;
+            line-height: 1.4;
+            color: black;
+        }
+
+        .comment-input {
+            width: calc(100% - 80px);
+            padding: 15px;
+            margin: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            resize: vertical;
+            min-height: 100px;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .comment-submit {
+            width: calc(100% - 50px);
+            padding: 15px;
+            margin: 0 20px 20px;
+            background-color: #4CAF50;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .comment-submit:hover {
+            background-color: #45a049;
+        }
+
+        .eotrmf {
+            position: fixed;
+            top: 0px;
+            right: 30px;
+            font-size: 24px;
+            color: #000000;
+            width: 50px;
+            height: 40px;
+            display: flex;
+            z-index: 100000000;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
     </style>
 </head>
 <body>
+    <div class="eotrmf">💬</div>
+<div class="comment-section" id="commentSection">
+        <div class="comment-header">댓글</div>
+        <hr>
+        <div class="comment-body" id="commentBody">
+            {% for comment in comments %}
+            <div class="comment">
+                <p>{{ comment.content }}</p>
+            </div>
+            {% endfor %}
+        </div>
+        {% if islogin == True %}
+        <textarea class="comment-input" id="commentInput" placeholder="댓글을 입력하세요..."></textarea>
+        <button class="comment-submit" onclick="addcomment()">댓글 추가</button>
+        {% endif %}
+    </div>
+
+
     <div class="solar-system">
         <div class="sun" data-planet="sun"></div>
         <div class="planet mercury" data-planet="mercury"></div>
@@ -125,7 +236,48 @@
     <div class="planet-info"></div>
     
     <script>
-        // 별 생성
+        document.querySelector('.eotrmf').addEventListener('click', () => {
+            commentSection.classList.toggle('open');
+        });
+function addcomment() {
+const commentSection = document.getElementById('commentSection');
+    const commentInput = document.getElementById('commentInput');
+    const commentBody = document.getElementById('commentBody');
+    const postId = 4; // 실제 포스트 ID로 교체해야 함
+
+    const newCommentText = commentInput.value.trim();
+    if (newCommentText === '') return; // 빈 댓글은 추가하지 않음
+
+    // 댓글을 추가하는 요청
+    fetch(`/comments/${postId}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-Requested-With': 'XMLHttpRequest'
+        },
+        body: new URLSearchParams({
+            content: newCommentText
+        })
+    })
+    .then(response => {
+        if (response.ok) {
+            return response.json();
+        } else {
+            throw new Error('댓글 추가에 실패했습니다.');
+        }
+    })
+    .then(newComment => {
+        // 댓글 추가 성공 시 댓글을 DOM에 추가
+        const commentElement = document.createElement('div');
+        commentElement.textContent = newComment.content;
+        commentBody.appendChild(commentElement);
+        commentInput.value = ''; // 입력 필드 초기화
+    })
+    .catch(error => {
+        console.error('댓글 추가 중 오류 발생:', error);
+        alert('댓글 추가에 실패했습니다.');
+    });
+}
         const starsContainer = document.querySelector('.stars');
         for (let i = 0; i < 200; i++) {
             const star = document.createElement('div');

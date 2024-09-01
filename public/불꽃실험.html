@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>불꽃 실험</title>
     <style>
+        /* 기존 스타일 유지 */
         body {
             margin: 0;
             padding: 0;
@@ -110,7 +111,7 @@
             z-index: 768907659685;
         }
 
-        .candle{
+        .candle {
             position: absolute;
             width: 450px;
             height: 329px;
@@ -118,8 +119,8 @@
             background-color: white;
             border-radius: 10% 10% 0 0;
         }
-        .candle-trash
-        {
+        
+        .candle-trash {
             position: absolute;
             margin-bottom: 30px;
             background-color: rgb(107, 69, 69);
@@ -127,8 +128,8 @@
             height: 35px;
             opacity: 0.6;
         }
-        .tutorial
-        {
+        
+        .tutorial {
             z-index: 1000000;
             position: absolute;
             width: 100%;
@@ -136,8 +137,8 @@
             background-color: black;
             opacity: 0.6;
         }
-        .speech-balloon
-        {
+        
+        .speech-balloon {
             background-color: white;
             width: 500px;
             height: 100px;
@@ -145,52 +146,164 @@
             border-radius: 10% 10% 10% 10%;
             text-align: center;
             margin: 0 auto;
-            
         }
-            .onemoretutorial {
-        position: absolute;
-        top: 0;
-        right: 0;
-        font-size: 30px;
-    }
+        
+        .onemoretutorial {
+            position: absolute;
+            top: 0;
+            right: 0;
+            font-size: 30px;
+        }
+        .comment-section {
+            position: fixed;
+            top: 0;
+            left: -400px;
+            width: 350px;
+            height: 100%;
+            background-color: #f8f8f8;
+            box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
+            transition: left 0.3s ease-in-out;
+            z-index: 10000;
+            display: flex;
+            flex-direction: column;
+            font-family: 'Roboto', sans-serif;
+        }
 
+        .comment-section.open {
+            left: 0;
+        }
+
+        .comment-header {
+            padding: 10px;
+            color: #000000;
+            font-size: 20px;
+            font-weight: 20;
+            text-align: center;
+
+        }
+
+        .comment-body {
+            padding: 10px;
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+
+        .comment {
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+
+        .comment p {
+            margin: 0 0 10px 0;
+            line-height: 1.4;
+        }
+
+        .comment-input {
+            width: calc(100% - 80px);
+            padding: 15px;
+            margin: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            resize: vertical;
+            min-height: 100px;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .comment-submit {
+            width: calc(100% - 50px);
+            padding: 15px;
+            margin: 0 20px 20px;
+            background-color: #4CAF50;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .comment-submit:hover {
+            background-color: #45a049;
+        }
+
+        .eotrmf {
+            position: fixed;
+            top: 0px;
+            right: 30px;
+            font-size: 24px;
+            color: #000000;
+            width: 50px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
     </style>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap">
 </head>
 
 <body>
     <div class="onemoretutorial" onclick="firsttutorial()">(?)</div>
-        <div class="tutorial"></div>
-        <div class="speech-balloon"></div>
+    <div class="eotrmf">💬</div>
+    
 
-        <div class="fire-container">
-            <div class="fire"></div>
-        </div>
-        <div class="candle"></div>
-        <div class="candle-trash"></div>
-        <div class="circle-container">
-    <div class="circle"></div>
-</div>
+    <div class="tutorial"></div>
+    <div class="speech-balloon"></div>
+
+    <div class="fire-container">
+        <div class="fire"></div>
+    </div>
+    <div class="candle"></div>
+    <div class="candle-trash"></div>
+    <div class="circle-container">
+        <div class="circle"></div>
+    </div>
     <div class="input-container">
         <select id="select-input" onchange="updateCircleText()" ontouchstart="updateCircleText()">
-      <option value="">원소 기호를 선택하세요.</option>
-      <option value="Li">Li</option>
-      <option value="Na">Na</option>
-      <option value="Ca">Ca</option>
-      <option value="Cu">Cu</option>
-      <option value="K">K</option>
-      <option value="Sr">Sr</option>
-      <option value="Ba">Ba</option>
-    </select>
+            <option value="">원소 기호를 선택하세요.</option>
+            <option value="Li">Li</option>
+            <option value="Na">Na</option>
+            <option value="Ca">Ca</option>
+            <option value="Cu">Cu</option>
+            <option value="K">K</option>
+            <option value="Sr">Sr</option>
+            <option value="Ba">Ba</option>
+        </select>
     </div>
 
     <button class="button" onclick="goToMain()">돌아가기</button>
+    <div class="comment-section" id="commentSection">
+        <div class="comment-header">댓글</div>
+        <hr>
+        <div class="comment-body" id="commentBody">
+            {% for comment in comments %}
+            <div class="comment">
+                <p>{{ comment.content }}</p>
+            </div>
+            {% endfor %}
+        </div>
+        {% if islogin == True %}
+        <textarea class="comment-input" id="commentInput" placeholder="댓글을 입력하세요..."></textarea>
+        <button class="comment-submit" onclick="addcomment()">댓글 추가</button>
+        {% endif %}
+    </div>
 
     <script>
         const circleElement = document.querySelector('.circle');
         const selectInputElement = document.getElementById('select-input');
         const fireElement = document.querySelector('.fire');
-        let flag = false;
+        let flag = false;   
+        const commentSection = document.getElementById('commentSection');
+
+        document.querySelector('.eotrmf').addEventListener('click', () => {
+            commentSection.classList.toggle('open');
+        });
 
         // 원을 드래그할 수 있도록 설정
         let isDragging = false;
@@ -205,20 +318,21 @@
         window.addEventListener('touchmove', drag);
         window.addEventListener('mouseup', stopDrag);
         window.addEventListener('touchend', stopDrag);
+
         function startDrag(event) {
             event.preventDefault();
             isDragging = true;
-            if (event.type === 'mousedown' && flag==true) {
+            if (event.type === 'mousedown' && flag === true) {
                 offset.x = event.clientX - circleElement.getBoundingClientRect().left;
                 offset.y = event.clientY - circleElement.getBoundingClientRect().top;
-            } else if (event.type === 'touchstart' && flag==true) {
+            } else if (event.type === 'touchstart' && flag === true) {
                 offset.x = event.touches[0].clientX - circleElement.getBoundingClientRect().left;
                 offset.y = event.touches[0].clientY - circleElement.getBoundingClientRect().top;
             }
         }
 
         function drag(event) {
-            if (isDragging && flag==true) {
+            if (isDragging && flag === true) {
                 event.preventDefault();
                 const containerRect = circleElement.parentElement.getBoundingClientRect();
                 let x, y;
@@ -279,61 +393,99 @@
         function goToMain() {
             window.location.href = '/index';
         }
+
         window.addEventListener('load', function() {
-    firsttutorial();
-});
+            firsttutorial();
+        });
 
-    function firsttutorial(){
-        const tutorialElement = document.querySelector('.tutorial');
-    const speechBalloon = document.querySelector('.speech-balloon');
-    const selecter = document.querySelector('.input-container');
-    const selecterContainerRect = selecter.getBoundingClientRect();
-    let speechHeight = speechBalloon.offsetHeight;
-    let speechWidth = speechBalloon.offsetWidth;
-    speechBalloon.style.display="block";
-    speechBalloon.style.position = 'absolute';
-    speechBalloon.style.top = selecterContainerRect.top - speechHeight - 10 + 'px'; // 20px는 여백을 조절하는 값입니다.
-    speechBalloon.style.left = selecterContainerRect.left -500+ 'px';
+        function firsttutorial() {
+            const tutorialElement = document.querySelector('.tutorial');
+            const speechBalloon = document.querySelector('.speech-balloon');
+            const selecter = document.querySelector('.input-container');
+            const selecterContainerRect = selecter.getBoundingClientRect();
+            let speechHeight = speechBalloon.offsetHeight;
+            let speechWidth = speechBalloon.offsetWidth;
+            speechBalloon.style.display = "block";
+            speechBalloon.style.position = 'absolute';
+            speechBalloon.style.top = selecterContainerRect.top - speechHeight - 10 + 'px'; // 20px는 여백을 조절하는 값입니다.
+            speechBalloon.style.left = selecterContainerRect.left - 500 + 'px';
 
-    selecter.style.zIndex = 1000000;
-    tutorialElement.style.display = 'block';
-    speechBalloon.textContent = "다음 원소기호 중 하나를 고르세요."; 
-    setTimeout(function() {
-        secondtutorial();
-        selecter.style.zIndex=0;
-}, 2000);
+            selecter.style.zIndex = 1000000;
+            tutorialElement.style.display = 'block';
+            speechBalloon.textContent = "다음 원소기호 중 하나를 고르세요.";
+            setTimeout(function() {
+                secondtutorial();
+                selecter.style.zIndex = 0;
+            }, 2000);
+        }
 
-        
-    }
-    function secondtutorial() {
-    const tutorialElement = document.querySelector('.tutorial');
-    const speechBalloon = document.querySelector('.speech-balloon');
-    const circle = document.querySelector('.circle'); // circle 요소 추가
-    const circlecon = document.querySelector('.circle-container');
-    let speechHeight = speechBalloon.offsetHeight;
-    let speechWidth = speechBalloon.offsetWidth;
-    const circleContainerRect = circle.getBoundingClientRect();
-    speechHeight = speechBalloon.offsetHeight;
-    speechWidth = speechBalloon.offsetWidth;
+        function secondtutorial() {
+            const tutorialElement = document.querySelector('.tutorial');
+            const speechBalloon = document.querySelector('.speech-balloon');
+            const circle = document.querySelector('.circle');
+            const circlecon = document.querySelector('.circle-container');
+            let speechHeight = speechBalloon.offsetHeight;
+            let speechWidth = speechBalloon.offsetWidth;
+            const circleContainerRect = circle.getBoundingClientRect();
+            speechHeight = speechBalloon.offsetHeight;
+            speechWidth = speechBalloon.offsetWidth;
 
-    speechBalloon.style.position = 'absolute';
-    speechBalloon.style.top = circleContainerRect.top - speechHeight - 20 + 'px'; // 20px는 여백을 조절하는 값입니다.
-    speechBalloon.style.left = circleContainerRect.left - 200 + 'px';
-    circle.style.zIndex = 52378909820734623598329870;
-    circlecon.style.zIndex=1000000;
-    tutorialElement.style.display = 'block';
-    speechBalloon.textContent = "이것을 끌어서 불꽃에 가져다 둡니다.";
+            speechBalloon.style.position = 'absolute';
+            speechBalloon.style.top = circleContainerRect.top - speechHeight - 20 + 'px'; // 20px는 여백을 조절하는 값입니다.
+            speechBalloon.style.left = circleContainerRect.left - 200 + 'px';
+            circle.style.zIndex = 52378909820734623598329870;
+            circlecon.style.zIndex = 1000000;
+            tutorialElement.style.display = 'block';
+            speechBalloon.textContent = "이것을 끌어서 불꽃에 가져다 둡니다.";
 
-    setTimeout(function () {
-        circle.style.zIndex=30237849573295800;
-        circlecon.style.zIndex=234112342134;
-        tutorialElement.style.display = "none";
-        speechBalloon.style.display = "none";
-        flag=true;
-    }, 2000);
+            setTimeout(function () {
+                circle.style.zIndex = 30237849573295800;
+                circlecon.style.zIndex = 234112342134;
+                tutorialElement.style.display = "none";
+                speechBalloon.style.display = "none";
+                flag = true;
+            }, 2000);
+        }
+        function addcomment() {
+    const commentInput = document.getElementById('commentInput');
+    const commentBody = document.getElementById('commentBody');
+    const postId = 1; // 실제 포스트 ID로 교체해야 함
+
+    const newCommentText = commentInput.value.trim();
+    if (newCommentText === '') return; // 빈 댓글은 추가하지 않음
+
+    // 댓글을 추가하는 요청
+    fetch(`/comments/${postId}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-Requested-With': 'XMLHttpRequest'
+        },
+        body: new URLSearchParams({
+            content: newCommentText
+        })
+    })
+    .then(response => {
+        if (response.ok) {
+            return response.json();
+        } else {
+            throw new Error('댓글 추가에 실패했습니다.');
+        }
+    })
+    .then(newComment => {
+        // 댓글 추가 성공 시 댓글을 DOM에 추가
+        const commentElement = document.createElement('div');
+        commentElement.textContent = newComment.content;
+        commentBody.appendChild(commentElement);
+        commentInput.value = ''; // 입력 필드 초기화
+    })
+    .catch(error => {
+        console.error('댓글 추가 중 오류 발생:', error);
+        alert('댓글 추가에 실패했습니다.');
+    });
 }
 
-   </script>
+    </script>
 </body>
 
 </html>
