@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>로그인</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;  
+            margin: 0;
+        }
+        .login-container {
+            background-color: white;
+            width: 30%;
+            height: auto;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+        input {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            box-sizing: border-box;
+            border-width: 0 0 1px;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #9ca4a6;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        button.active {
+            background-color: #5ca6fa;
+        }
+        p {
+            text-align: center;
+            color: #666;
+            font-size: 0.9em;
+            margin: 10px 0;
+        }
+        .warning {
+            color: #d9534f;
+            font-style: italic;
+        }
+        .signup-prompt {
+            font-style: oblique;
+            cursor: pointer;
+        }
+        .asdf{
+            color: #9ca4a6;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <h2>로그인</h2>
+        <form id="loginForm" action="/login" method="post">
+            <label class="asdf">이메일</label>
+            <input type="email" id='email' name="email" placeholder="이메일 주소를 입력하세요" required>
+            <br>
+            <label class="asdf">비밀번호</label>
+            <input type="password" id='password' name="password" placeholder="비밀번호를 입력하세요." required>
+            <p class="warning">이메일 및 비밀번호를 다시 한번 확인하세요</p>
+            <button type="submit" id="loginButton">로그인</button>   
+        </form>        
+    </div>
+
+    <script>
+        const form = document.getElementById('loginForm');
+        const email = document.getElementById('email');
+        const password = document.getElementById('password');
+        const loginButton = document.getElementById('loginButton');
+
+        function checkInputs() {
+            if (email.value.trim() !== '' && password.value.trim() !== '') {
+                loginButton.classList.add('active');
+            } else {
+                loginButton.classList.remove('active');
+            }
+        }
+
+        email.addEventListener('input', checkInputs);
+        password.addEventListener('input', checkInputs);
+    </script>
+</body>
+</html>

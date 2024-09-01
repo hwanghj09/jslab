@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>병렬 연결된 전구 회로</title>
+    <style>
+        :root {
+            --primary-color: #000000;
+            --secondary-color: #000000;
+            --background-color: #ecf0f1;
+            --text-color: #2c3e50;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            flex-grow: 1;
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--primary-color);
+        }
+
+        .circuit {
+            position: relative;
+            width: 100%;
+            height: 400px;
+            margin-bottom: 20px;
+        }
+
+        .bulb {
+    width: 60px;
+    height: 60px;
+    border-radius: 50% 50% 50% 50%;
+    background-color: #f0f0f0;
+    position: absolute;
+    transition: all 0.3s ease-in-out;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+.bulb:nth-child(5) { top: 180px; left: 54%; }
+.bulb:nth-child(6) { top: 80px; left: 54%; }
+
+.bulb:before {
+    content: '';
+    position: absolute;
+    width: 80%;
+    height: 80%;
+    background: radial-gradient(ellipse at center, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0) 70%);
+    top: 10%;
+    left: 10%;
+    border-radius: 50%;
+}
+
+.filament {
+    width: 60%;
+    height: 60%;
+    border: 2px solid #999;
+    border-radius: 50%;
+    transition: all 0.3s ease-in-out;
+}
+
+.bulb.on {
+    background-color: #ffffa0;
+    box-shadow: 0 0 20px #ffffa0;
+}
+
+.bulb.on .filament {
+    border-color: #ff9900;
+    box-shadow: 0 0 15px #ff9900;
+}
+
+.wire {
+    position: absolute;
+    background-color: #555;
+    overflow: hidden;
+}
+
+.wire-main {
+    top: 200px;
+    left: 25%;
+    width: 50%;
+    height: 4px;
+}
+
+.wire-branch1 {
+    top: 100px;
+    left: 47%;
+    width: 4px;
+    height: 100px;
+}
+
+.wire-branch2 {
+    top: 100px;
+    left: 47%;
+    width: 10%;
+    height: 4px;
+}
+
+.current {
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to right, transparent, #f8d01c, transparent);
+    animation: flow 1s linear infinite;
+    display: none;
+}
+
+@keyframes flow {
+    0% { left: -100%; }
+    100% { left: 100%; }
+}
+
+.wire-branch1 .current {
+    animation: flowVertical 2s linear infinite;
+}
+
+@keyframes flowVertical {
+    0% { top: -100%; }
+    100% { top: 100%; }
+}
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        button {
+            cursor: pointer;
+            font-weight: bold;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: var(--primary-color);
+            color: white;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        button:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-2px);
+        }
+
+        .wire {
+            position: absolute;
+            background-color: black;
+        }
+
+        .wire-main {
+            top: 200px;
+            left: 25%;
+            width: 50%;
+            height: 10px;
+        }
+
+        .wire-branch1 {
+            top: 100px;
+            left: 45%;
+            width: 10px;
+            height: 100px;
+        }
+
+        .wire-branch2 {
+            top: 100px;
+            left: 45%;
+            width: 30%;
+            height: 10px;
+        }
+
+        .cut {
+            position: absolute;
+            top: 95px;
+            left: 49%;
+            width: 20px;
+            height: 20px;
+            background-color: var(--background-color);
+            display: none;
+        }
+
+        .explanation {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>병렬 연결된 전구 회로</h1>
+        
+        <div class="circuit">
+            <div class="wire wire-main">
+                <div class="current"></div>
+            </div>
+            <div class="wire wire-branch1">
+                <div class="current"></div>
+            </div>
+            <div class="wire wire-branch2">
+                <div class="current"></div>
+            </div>
+            <div class="cut"></div>
+            <div class="bulb" aria-label="전구 1">
+                <div class="filament"></div>
+            </div>
+            <div class="bulb" aria-label="전구 2">
+                <div class="filament"></div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button id="toggleSwitch" onclick="toggleBulbs()">전류 흐르게 하기</button>
+            <button id="cutWire" onclick="cutWire()">전선 자르기</button>
+        </div>
+
+        <div class="explanation">
+            <h2>병렬 연결이란?</h2>
+            <p>병렬 연결에서는 전류가 여러 경로로 나뉘어 흐릅니다. 각 전구는 독립적으로 작동하며, 하나의 전구가 고장나도 다른 전구는 계속 작동합니다. 이는 가정용 전기 배선과 같은 곳에서 흔히 사용됩니다.</p>
+        </div>
+
+        <div class="navigation">
+            <button onclick="goToIndex()">메인으로</button>
+            <button onclick="goToSeriesCircuit()">직렬 회로 보기</button>
+        </div>
+    </div>
+
+    <script>
+        let bulbsOn = false;
+let wireCut = false;
+
+function toggleBulbs() {
+    const bulbs = document.querySelectorAll('.bulb');
+    const switchButton = document.getElementById('toggleSwitch');
+    const currents = document.querySelectorAll('.current');
+
+    bulbsOn = !bulbsOn;
+    bulbs.forEach((bulb, index) => {
+        if (!wireCut || index === 0) {
+            bulb.classList.toggle('on', bulbsOn);
+        }
+    });
+    switchButton.textContent = bulbsOn ? '전류 멈추기' : '전류 흐르게 하기';
+    
+    currents.forEach((current, index) => {
+        if (!wireCut || index !== 2) {
+            current.style.display = bulbsOn ? 'block' : 'none';
+        }
+    });
+}
+
+function cutWire() {
+    const cutWireButton = document.getElementById('cutWire');
+    const cut = document.querySelector('.cut');
+    const bulbs = document.querySelectorAll('.bulb');
+    const currents = document.querySelectorAll('.current');
+
+    wireCut = !wireCut;
+    cut.style.display = wireCut ? 'block' : 'none';
+    cutWireButton.textContent = wireCut ? '전선 이어주기' : '전선 자르기';
+
+    if (bulbsOn) {
+        bulbs[1].classList.toggle('on', !wireCut);
+        currents[2].style.display = wireCut ? 'none' : 'block';
+    }
+}
+
+        function goToIndex() {
+            window.location.href = '/실험/전기회로';
+        }
+
+        function goToSeriesCircuit() {
+            window.location.href = '/실험/전기회로-직';
+        }
+    </script>
+</body>
+</html>

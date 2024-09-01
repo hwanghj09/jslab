@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Nanum+Gothic:wght@400;700&display=swap" rel="stylesheet">
+    <title>식물의 성장 단계와 실시간 날씨</title>
+    <style>
+        body {
+            font-family: 'Nanum Gothic', sans-serif;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+
+        .ground {
+            position: fixed;
+            height: 40%;
+            width: 100%;
+            background-color: #8b4513;
+            bottom: 0;
+            z-index: -1;
+        }
+
+        .plant-container {
+            display: flex;
+            justify-content: space-around;
+            align-items: flex-end;
+            height: 60vh;
+            padding-bottom: 20vh;
+        }
+
+        .plant-stage {
+            width: 30%;
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .seed {
+            width: 20px;
+            height: 20px;
+            background-color: #472005;
+            border-radius: 50%;
+            margin: 0 auto;
+        }
+
+        .sprout {
+            width: 10px;
+            height: 50px;
+            background-color: #4caf50;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .sprout::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: -5px;
+            width: 20px;
+            height: 20px;
+            background-color: #81c784;
+            border-radius: 50% 50% 0 0;
+        }
+
+        .full-plant {
+            width: 10px;
+            height: 150px;
+            background-color: #4caf50;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .full-plant::before {
+            content: '';
+            position: absolute;
+            top: -50px;
+            left: -45px;
+            width: 100px;
+            height: 100px;
+            background-color: #81c784;
+            border-radius: 50%;
+        }
+
+        .explanation {
+            width: 80%;
+            background-color: rgba(255, 255, 255, 0.9);
+            position: absolute;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            display: none;
+            top: 70%;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .button {
+            padding: 10px 20px;
+            font-size: 18px;
+            background-color: #4caf50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: transform 0.2s;
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .button:hover {
+            transform: translateX(-50%) scale(1.05);
+        }
+
+        .weather-effects {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        .rain {
+            position: absolute;
+            width: 2px;
+            height: 20px;
+            background-color: #00f;
+            opacity: 0.5;
+            animation: rain-fall linear;
+        }
+
+        @keyframes rain-fall {
+            to {
+                transform: translateY(100vh);
+            }
+        }
+
+        .cloud {
+            position: absolute;
+            width: 200px;
+            height: 60px;
+            background-color: #ccc;
+            border-radius: 50px;
+            opacity: 0.7;
+        }
+
+        .cloud::before, .cloud::after {
+            content: '';
+            position: absolute;
+            background-color: #ccc;
+            border-radius: 50%;
+        }
+
+        .cloud::before {
+            width: 100px;
+            height: 100px;
+            top: -50px;
+            left: 10px;
+        }
+
+        .cloud::after {
+            width: 80px;
+            height: 80px;
+            top: -35px;
+            right: 30px;
+        }
+
+        .sun {
+            position: absolute;
+            width: 150px;
+            height: 150px;
+            background-color: #ffeb3b;
+            border-radius: 50%;
+            top: 10%;
+            left: 70%;
+            box-shadow: 0 0 50px rgba(255, 235, 59, 0.7);
+        }
+
+        .weather-info {
+            position: fixed;
+            top: 10%;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            text-align: center;
+            z-index: 1001;
+        }
+
+        .weather-info h2 {
+            margin: 0;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .weather-info p {
+            font-size: 18px;
+        }
+
+        .heat-wave {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(255, 0, 0, 0.3), rgba(255, 165, 0, 0.3));
+            opacity: 0.6;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+    <div class="ground"></div>
+    <div class="plant-container">
+        <div class="plant-stage" onclick="showExplanation('seed')">
+            <div class="seed"></div>
+        </div>
+        <div class="plant-stage" onclick="showExplanation('sprout')">
+            <div class="sprout"></div>
+        </div>
+        <div class="plant-stage" onclick="showExplanation('full-plant')">
+            <div class="full-plant"></div>
+        </div>
+    </div>
+
+    <div class="explanation" id="seed-explanation">
+        <h3>씨앗</h3>
+        <p>1. 식물의 새로운 생명이 시작되는 단계입니다.</p>
+        <p>2. 씨앗 안에는 새로운 식물을 위한 영양분이 들어있습니다.</p>
+        <p>3. 적절한 조건(물, 온도, 산소)이 갖추어지면 발아를 시작합니다.</p>
+    </div>
+
+    <div class="explanation" id="sprout-explanation">
+        <h3>새싹</h3>
+        <p>1. 씨앗이 발아하여 어린 식물이 자라나는 단계입니다.</p>
+        <p>2. 이 시기에 뿌리와 첫 번째 잎(떡잎)이 형성됩니다.</p>
+        <p>3. 광합성을 시작하여 스스로 영양분을 만들기 시작합니다.</p>
+    </div>
+
+    <div class="explanation" id="full-plant-explanation">
+        <h3>성체 식물</h3>
+        <p>1. 완전히 성장한 식물의 모습입니다.</p>
+        <p>2. 잎, 줄기, 뿌리가 모두 발달하여 각자의 기능을 수행합니다.</p>
+        <p>3. 꽃을 피우고 열매를 맺어 번식할 준비를 합니다.</p>
+    </div>
+
+    <div class="weather-effects" id="weatherEffects"></div>
+    
+    <div class="weather-info" id="weatherInfo">
+        <h2>현재 날씨 정보</h2>
+        <p id="rainfallInfo">강수량: </p>
+        <p id="skyStatusInfo">하늘 상태: </p>
+    </div>
+
+    <button class="button" onclick="goToMain()">돌아가기</button>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
+    <script>
+        function showExplanation(stage) {
+            document.querySelectorAll('.explanation').forEach(exp => exp.style.display = 'none');
+            document.getElementById(`${stage}-explanation`).style.display = 'block';
+        }
+
+        function goToMain() {
+            window.location.href = '/index';
+        }
+
+        function formatDate(date) {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}${month}${day}`;
+        }
+
+        function formatTime(date) {
+            const hours = String(date.getHours()).padStart(2, '0');
+            const minutes = String(date.getMinutes()).padStart(2, '0');
+            return `${hours}${minutes}`;
+        }
+
+        function convertToGridCoord(lat, lon) {
+            const RE = 6371.00877;
+            const GRID = 5.0;
+            const SLAT1 = 30.0;
+            const SLAT2 = 60.0;
+            const OLON = 126.0;
+            const OLAT = 38.0;
+            
+            const DEGRAD = Math.PI / 180.0;
+            const RADDEG = 180.0 / Math.PI;
+            
+            const re = RE / GRID;
+            const slat1 = SLAT1 * DEGRAD;
+            const slat2 = SLAT2 * DEGRAD;
+            const olon = OLON * DEGRAD;
+            const olat = OLAT * DEGRAD;
+            
+            const sn = Math.tan(Math.PI * 0.25 + slat2 * 0.5) / Math.tan(Math.PI * 0.25 + slat1 * 0.5);
+            const sf = Math.tan(Math.PI * 0.25 + slat1 * 0.5);
+            const sf2 = Math.tan(Math.PI * 0.25 + slat2 * 0.5);
+            const tf = Math.tan(Math.PI * 0.25 + olat * 0.5);
+            const tf2 = Math.tan(Math.PI * 0.25 + olat * 0.5);
+
+            const theta = Math.atan2(Math.tan(Math.PI * 0.25 + lat * DEGRAD * 0.5), Math.cos(olon - lon * DEGRAD));
+            const x = Math.atan2(Math.sin(theta), Math.cos(theta) * Math.cos(slat1));
+            const y = Math.atan2(Math.sin(theta), Math.cos(theta) * Math.cos(slat2));
+
+            return {
+                nx: Math.round((x + 180) / 360 * re + 1),
+                ny: Math.round((y + 90) / 180 * re + 1)
+            };
+        }
+
+        async function getWeatherAndApplyEffects() {
+            try {
+                const position = await new Promise((resolve, reject) => {
+                    navigator.geolocation.getCurrentPosition(resolve, reject, { timeout: 10000 });
+                });
+
+                const lat = position.coords.latitude;
+                const lon = position.coords.longitude;
+                
+                const gridCoord = convertToGridCoord(lat, lon);
+                
+                const apiKey = 'DYoMvwKMGezxrdvkut2Pm5zF2ifEhO954vPneEy7VX%2Bb13ovcevvhDynHE%2FB7Inx%2F%2BgDY%2FFo55p0JIAwuc5J6g%3D%3D';
+                const now = new Date();
+                const baseDate = formatDate(now);
+                const baseTime = formatTime(new Date(now.getTime() - 1 * 60 * 60 * 1000));
+
+                const apiUrl = `http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getUltraSrtNcst?serviceKey=${apiKey}&pageNo=1&numOfRows=10&dataType=JSON&base_date=${baseDate}&base_time=${baseTime}&nx=${gridCoord.nx}&ny=${gridCoord.ny}`;
+
+                const response = await axios.get(apiUrl);
+                const weatherData = response.data.response.body.items.item || [];
+
+                console.log('API Response:', response.data);
+
+                const rainfall = weatherData.find(item => item.category === 'RN1')?.obsrValue || 0;
+                const skyStatus = weatherData.find(item => item.category === 'SKY')?.obsrValue || 0;
+                const temperature = weatherData.find(item => item.category === 'TMP')?.obsrValue || 0;
+
+                document.getElementById('rainfallInfo').textContent = `강수량: ${rainfall} mm`;
+                document.getElementById('skyStatusInfo').textContent = `하늘 상태: ${skyStatus}`;
+
+                document.getElementById('weatherEffects').innerHTML = '';
+                document.getElementById('weatherInfo').style.backgroundColor = 'rgba(255, 255, 255, 0.9)';
+
+                if (rainfall > 0) {
+                    createRainEffect();
+                } else if (skyStatus >= 3) {
+                    createCloudEffect();
+                } else if (temperature >= 30) {
+                    createHeatWaveEffect();
+                } else if (skyStatus == 1) {
+                    createSunEffect();
+                }
+            } catch (error) {
+                console.error('날씨 정보를 가져오는 데 실패했습니다:', error);
+            }
+        }
+
+        function createRainEffect() {
+            const weatherEffects = document.getElementById('weatherEffects');
+            for (let i = 0; i < 100; i++) {
+                const drop = document.createElement('div');
+                drop.className = 'rain';
+                drop.style.left = `${Math.random() * 100}vw`;
+                drop.style.animationDuration = `${Math.random() * 2 + 1}s`;
+                drop.style.animationDelay = `${Math.random() * 2}s`;
+                weatherEffects.appendChild(drop);
+            }
+        }
+
+        function createCloudEffect() {
+            const weatherEffects = document.getElementById('weatherEffects');
+            const cloud = document.createElement('div');
+            cloud.className = 'cloud';
+            cloud.style.top = `${Math.random() * 50}vh`;
+            cloud.style.left = `${Math.random() * 100}vw`;
+            weatherEffects.appendChild(cloud);
+        }
+
+        function createSunEffect() {
+            const weatherEffects = document.getElementById('weatherEffects');
+            const sun = document.createElement('div');
+            sun.className = 'sun';
+            weatherEffects.appendChild(sun);
+        }
+
+        function createHeatWaveEffect() {
+            const heatWave = document.createElement('div');
+            heatWave.className = 'heat-wave';
+            document.body.appendChild(heatWave);
+        }
+
+        window.onload = function() {
+            getWeatherAndApplyEffects();
+        };
+    </script>
+</body>
+</html>

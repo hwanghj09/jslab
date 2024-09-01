@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>회원가입</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;  
+            margin: 0;
+        }
+        .signup-container {
+            background-color: white;
+            width: 30%;
+            height: auto;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+        input {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            box-sizing: border-box;
+            border-width: 0 0 1px;
+            font-size: 9pt;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #9ca4a6;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        button.active {
+            background-color: #007bff;
+        }
+        p {
+            text-align: center;
+            color: #666;
+            font-size: 0.9em;
+            margin: 10px 0;
+        }
+        .warning {
+            color: #d9534f;
+            font-style: italic;
+        }
+        .login-prompt {
+            font-style: oblique;
+            cursor: pointer;
+        }
+        .label {
+            color: #9ca4a6;
+        }
+    </style>
+</head>
+<body>
+    <div class="signup-container">
+        <h2>회원가입</h2>
+        <form id="signupForm" action="/signup" method="post">
+            <a class="label">이름</a>
+            <input type="text" name="name" placeholder="이름을 입력하세요" required>
+            <br>
+            <a class="label">이메일</a>
+            <input type="email" name="email" placeholder="이메일 주소를 입력하세요" required>
+            <br>
+            <a class="label">비밀번호</a>
+            <input type="password" name="password" placeholder="비밀번호를 입력하세요" required>
+            <br>
+            <a class="label">비밀번호 확인</a>
+            <input type="password" name="confirmPassword" placeholder="비밀번호를 다시 입력하세요" required>
+            <p class="warning" id="warningMessage">모든 필드를 올바르게 입력해주세요</p>
+            <button type="submit" id="signupButton">가입하기</button>   
+        </form>
+        <p class="login-prompt" onclick="window.location.href='/login'">이미 계정이 있으신가요?</p>
+    </div>
+
+    <script>
+        const form = document.getElementById('signupForm');
+        const name = form.querySelector('input[name="name"]');
+        const email = form.querySelector('input[name="email"]');
+        const password = form.querySelector('input[name="password"]');
+        const confirmPassword = form.querySelector('input[name="confirmPassword"]');
+        const signupButton = document.getElementById('signupButton');
+        const warningMessage = document.getElementById('warningMessage');
+
+        function checkInputs() {
+            if (name.value.trim() !== '' && 
+                email.value.trim() !== '' && 
+                password.value.trim() !== '' && 
+                confirmPassword.value.trim() !== '' &&
+                password.value === confirmPassword.value) {
+                signupButton.classList.add('active');
+                warningMessage.style.display = 'none';
+            } else {
+                signupButton.classList.remove('active');
+                warningMessage.style.display = 'block';
+            }
+        }
+
+        name.addEventListener('input', checkInputs);
+        email.addEventListener('input', checkInputs);
+        password.addEventListener('input', checkInputs);
+        confirmPassword.addEventListener('input', checkInputs);
+    </script>
+</body>
+</html>

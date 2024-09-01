@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>직렬 연결된 전구 회로</title>
+    <style>
+        :root {
+            --primary-color: #000000;
+            --secondary-color: #000000;
+            --background-color: #ecf0f1;
+            --text-color: #2c3e50;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            flex-grow: 1;
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--primary-color);
+        }
+
+        .circuit {
+            position: relative;
+            width: 100%;
+            height: 300px;
+            margin-bottom: 20px;
+        }
+
+        .bulb {
+    width: 60px;
+    height: 60px;
+    border-radius: 50% 50% 50% 50%;
+    background-color: #f0f0f0;
+    position: absolute;
+    transition: all 0.3s ease-in-out;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+.bulb:nth-child(3) { top: 125px; left: 60%; }
+
+.bulb:before {
+    content: '';
+    position: absolute;
+    width: 80%;
+    height: 80%;
+    background: radial-gradient(ellipse at center, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0) 70%);
+    top: 10%;
+    left: 10%;
+    border-radius: 50%;
+}
+
+.filament {
+    width: 60%;
+    height: 60%;
+    border: 2px solid #999;
+    border-radius: 50%;
+    transition: all 0.3s ease-in-out;
+}
+
+.bulb.on {
+    background-color: #ffffa0;
+    box-shadow: 0 0 20px #ffffa0;
+}
+
+.bulb.on .filament {
+    border-color: #ff9900;
+    box-shadow: 0 0 15px #ff9900;
+}
+
+.wire {
+    position: absolute;
+    top: 150px;
+    left: 25%;
+    width: 50%;
+    height: 4px;
+    background-color: #555;
+    overflow: hidden;
+}
+
+.current {
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to right, transparent, #f8d01c, transparent);
+    animation: flow 1s linear infinite;
+    display: none;
+}
+
+@keyframes flow {
+    0% { left: -100%; }
+    100% { left: 100%; }
+}
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        button {
+            cursor: pointer;
+            font-weight: bold;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: var(--primary-color);
+            color: white;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        button:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-2px);
+        }
+
+        .wire {
+            position: absolute;
+            top: 150px;
+            left: 25%;
+            width: 50%;
+            height: 10px;
+            background-color: black;
+        }
+
+        .cut {
+            position: absolute;
+            top: 145px;
+            left: 49%;
+            width: 20px;
+            height: 20px;
+            background-color: var(--background-color);
+            display: none;
+        }
+
+        .explanation {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>직렬 연결된 전구 회로</h1>
+        
+        <div class="circuit">
+            <div class="wire">
+                <div class="current"></div>
+            </div>
+            <div class="cut"></div>
+            <div class="bulb" aria-label="전구 1">
+                <div class="filament"></div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button id="toggleSwitch" onclick="toggleBulbs()">전류 흐르게 하기</button>
+            <button id="cutWire" onclick="cutWire()">전선 자르기</button>
+        </div>
+
+        <div class="explanation">
+            <h2>직렬 연결이란?</h2>
+            <p>직렬 연결에서는 전류가 한 경로로만 흐릅니다. 모든 전구가 같은 전류를 공유하며, 하나의 전구가 고장나면 모든 전구가 꺼집니다. 이는 크리스마스 트리 조명과 같은 곳에서 흔히 볼 수 있습니다.</p>
+        </div>
+
+        <div class="navigation">
+            <button onclick="goToIndex()">메인으로</button>
+            <button onclick="goToParallelCircuit()">병렬 회로 보기</button>
+        </div>
+    </div>
+
+    <script>
+        let bulbsOn = false;
+let wireCut = false;
+
+function toggleBulbs() {
+    const bulbs = document.querySelectorAll('.bulb');
+    const switchButton = document.getElementById('toggleSwitch');
+    const current = document.querySelector('.current');
+
+    if (!wireCut) {
+        bulbsOn = !bulbsOn;
+        bulbs.forEach(bulb => bulb.classList.toggle('on', bulbsOn));
+        switchButton.textContent = bulbsOn ? '전류 멈추기' : '전류 흐르게 하기';
+        current.style.display = bulbsOn ? 'block' : 'none';
+    }
+}
+
+function cutWire() {
+    const cutWireButton = document.getElementById('cutWire');
+    const cut = document.querySelector('.cut');
+    const bulbs = document.querySelectorAll('.bulb');
+    const current = document.querySelector('.current');
+
+    wireCut = !wireCut;
+    cut.style.display = wireCut ? 'block' : 'none';
+    cutWireButton.textContent = wireCut ? '전선 이어주기' : '전선 자르기';
+
+    if (wireCut) {
+        bulbs.forEach(bulb => bulb.classList.remove('on'));
+        current.style.display = 'none';
+        bulbsOn = false;
+    }
+}
+function goToIndex() {
+            window.location.href = '/실험/전기회로';
+        }
+
+        function goToParallelCircuit() {
+            window.location.href = '/실험/전기회로-병';
+        }
+    </script>
+</body>
+</html>
