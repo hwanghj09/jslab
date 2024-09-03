@@ -1,9 +1,12 @@
 fastapi
-jinja2
 sqlalchemy
-passlib[bcrypt]
+passlib
 python-jose
-pydantic
+jinja2
+dropbox
+google-generativeai
+requests
+python-dotenv
 uvicorn
-pymysql
+pydantic
 mysqlclient
