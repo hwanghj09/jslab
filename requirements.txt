@@ -11,3 +11,4 @@ uvicorn
 pydantic
 mysqlclient
 pydantic[email]
+python-multipart
