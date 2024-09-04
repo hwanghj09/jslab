@@ -10,3 +10,4 @@ python-dotenv
 uvicorn
 pydantic
 mysqlclient
+pydantic[email]
