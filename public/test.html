@@ -1,0 +1,25 @@
+<!-- templates/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Realtime Simulation</title>
+</head>
+<body>
+    <h1>Realtime Simulation</h1>
+    <img id="simulation-image" src="" alt="Simulation Plot">
+    
+    <script>
+        const ws = new WebSocket("ws://localhost:8000/ws");
+        
+        ws.onmessage = function(event) {
+            document.getElementById("simulation-image").src = "data:image/png;base64," + event.data;
+        };
+        
+        ws.onclose = function(event) {
+            console.log("WebSocket connection closed");
+        };
+    </script>
+</body>
+</html>
