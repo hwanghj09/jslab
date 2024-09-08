@@ -12,3 +12,4 @@ pydantic
 mysqlclient
 pydantic[email]
 python-multipart
+numpy
