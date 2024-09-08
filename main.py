@@ -272,3 +272,8 @@ async def create_comment(
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Database integrity error")
     
     return db_comment
+@app.get("/logout")
+async def logout_user(request: Request):
+    response = RedirectResponse(url="/index", status_code=303)
+    response.delete_cookie(key="access_token")
+    return response

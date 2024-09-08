@@ -11,7 +11,7 @@
             background: #000;
             font-family: 'Roboto', sans-serif;
             color: white;
-            user-select: none; /* 드래그 시 텍스트 선택 방지 */
+            user-select: none;
         }
 
         .solar-system {
@@ -20,9 +20,8 @@
             position: relative;
             overflow: hidden;
             transform-origin: top left;
-            transition: transform 0.2s ease; /* 이동 시 부드럽게 전환 */
-            transform-origin: center center;
             transition: transform 0.2s ease;
+            transform-origin: center center;
         }
 
         .sun, .planet {
@@ -58,8 +57,8 @@
         .mars { --size: 16px; --orbit-radius: 180px; --orbit-period: 687s; background-image: url('../image/화성.png'); z-index: 10; --height: 16px }
         .jupiter { --size: 50px; --orbit-radius: 280px; --orbit-period: 4333s; background-image: url('../image/목성.png'); z-index: 10; --height: 50px }
         .saturn { --size: 44px; --orbit-radius: 400px; --orbit-period: 10759s; background-image: url('../image/토성.png'); z-index: 10; --height: 34px }
-        .uranus { --size: 30px; --orbit-radius: 500px; --orbit-period: 30687s; background-image: url('../image/천왕성.png'); z-index: 10; --height: 30px } /* 크기 축소 */
-        .neptune { --size: 28px; --orbit-radius: 620px; --orbit-period: 60190s; background-image: url('../image/해왕성.png'); z-index: 10; --height: 28px } /* 크기 축소 */
+        .uranus { --size: 30px; --orbit-radius: 500px; --orbit-period: 30687s; background-image: url('../image/천왕성.png'); z-index: 10; --height: 30px }
+        .neptune { --size: 28px; --orbit-radius: 620px; --orbit-period: 60190s; background-image: url('../image/해왕성.png'); z-index: 10; --height: 28px }
 
         .planet {
             width: var(--size);
@@ -93,6 +92,7 @@
             display: none;
             z-index: 20;
         }
+
         .backbutton {
             position: fixed;
             top: 10px;
@@ -105,6 +105,7 @@
             border-radius: 5px;
             text-decoration: none;
         }
+
         .comment-section {
             position: fixed;
             top: 0;
@@ -130,7 +131,6 @@
             font-size: 20px;
             font-weight: 20;
             text-align: center;
-
         }
 
         .comment-body {
@@ -197,12 +197,11 @@
             cursor: pointer;
             transition: background-color 0.2s;
         }
-
     </style>
 </head>
 <body>
     <div class="eotrmf">💬</div>
-<div class="comment-section" id="commentSection">
+    <div class="comment-section" id="commentSection">
         <div class="comment-header">댓글</div>
         <hr>
         <div class="comment-body" id="commentBody">
@@ -218,7 +217,6 @@
         {% endif %}
     </div>
 
-
     <div class="solar-system">
         <div class="sun" data-planet="sun"></div>
         <div class="planet mercury" data-planet="mercury"></div>
@@ -229,102 +227,62 @@
         <div class="planet saturn" data-planet="saturn"></div>
         <div class="planet uranus" data-planet="uranus"></div>
         <div class="planet neptune" data-planet="neptune"></div>
-        
     </div>
-    <a class="backbutton" onclick="window.location.href='/index'"><-</button>
+    <a class="backbutton" onclick="window.location.href='/index'"><-</a>
     <div class="stars"></div>
     <div class="planet-info"></div>
-    
+
     <script>
         document.querySelector('.eotrmf').addEventListener('click', () => {
             commentSection.classList.toggle('open');
         });
-function addcomment() {
-const commentSection = document.getElementById('commentSection');
-    const commentInput = document.getElementById('commentInput');
-    const commentBody = document.getElementById('commentBody');
-    const postId = 4; // 실제 포스트 ID로 교체해야 함
 
-    const newCommentText = commentInput.value.trim();
-    if (newCommentText === '') return; // 빈 댓글은 추가하지 않음
+        function addcomment() {
+            const commentInput = document.getElementById('commentInput');
+            const commentBody = document.getElementById('commentBody');
+            const content = commentInput.value.trim();
 
-    // 댓글을 추가하는 요청
-    fetch(`/comments/${postId}`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'X-Requested-With': 'XMLHttpRequest'
-        },
-        body: new URLSearchParams({
-            content: newCommentText
-        })
-    })
-    .then(response => {
-        if (response.ok) {
-            return response.json();
-        } else {
-            throw new Error('댓글 추가에 실패했습니다.');
-        }
-    })
-    .then(newComment => {
-        // 댓글 추가 성공 시 댓글을 DOM에 추가
-        const commentElement = document.createElement('div');
-        commentElement.textContent = newComment.content;
-        commentBody.appendChild(commentElement);
-        commentInput.value = ''; // 입력 필드 초기화
-    })
-    .catch(error => {
-        console.error('댓글 추가 중 오류 발생:', error);
-        alert('댓글 추가에 실패했습니다.');
-    });
-}
-        const starsContainer = document.querySelector('.stars');
-        for (let i = 0; i < 200; i++) {
-            const star = document.createElement('div');
-            star.classList.add('star');
-            star.style.width = star.style.height = Math.random() * 2 + 'px';
-            star.style.left = Math.random() * 100 + '%';
-            star.style.top = Math.random() * 100 + '%';
-            starsContainer.appendChild(star);
+            if (content !== "") {
+                const newComment = document.createElement('div');
+                newComment.className = 'comment';
+                newComment.innerHTML = `<p>${content}</p>`;
+                commentBody.appendChild(newComment);
+                commentInput.value = "";
+            }
         }
 
-        // 행성 정보 및 이동 기능
-        const planets = document.querySelectorAll('.planet, .sun');
-        const planetInfo = document.querySelector('.planet-info');
-        const solarSystem = document.querySelector('.solar-system');
-        const planetData = {
-            sun: { name: "태양", description: "태양계의 중심별로, 모든 행성에 중력과 에너지를 제공합니다." },
-            mercury: { name: "수성", description: "태양과 가장 가까운 행성으로, 표면 온도 변화가 극심합니다." },
-            venus: { name: "금성", description: "태양계에서 가장 뜨거운 행성으로, 두꺼운 대기로 인한 온실효과가 있습니다." },
-            earth: { name: "지구", description: "생명체가 알려진 유일한 행성으로, 액체 상태의 물이 존재합니다." },
-            mars: { name: "화성", description: "'붉은 행성'으로 알려져 있으며, 과거에 물이 흘렀던 흔적이 있습니다." },
-            jupiter: { name: "목성", description: "태양계에서 가장 큰 행성으로, 거대한 가스 행성입니다." },
-            saturn: { name: "토성", description: "아름다운 고리로 유명한 가스 행성입니다." },
-            uranus: { name: "천왕성", description: "옆으로 누워 공전하는 특이한 행성으로, 얼음 거인입니다." },
-            neptune: { name: "해왕성", description: "태양계의 가장 바깥쪽 행성으로, 강한 바람이 불고 있습니다." }
-        };
-
+        // 드래그 및 확대/축소 기능 코드
         let isDragging = false;
         let startX, startY, initialTransformX, initialTransformY;
+        let scale = 1;
+        const MIN_SCALE = 0.5;
+        const MAX_SCALE = 2;
+
+        const solarSystem = document.querySelector('.solar-system');
 
         function onMouseDown(event) {
             isDragging = true;
             startX = event.clientX;
             startY = event.clientY;
+
+            // 현재 transform 값을 가져와 저장
             const transform = getComputedStyle(solarSystem).transform;
             const matrix = new DOMMatrix(transform);
             initialTransformX = matrix.m41;
             initialTransformY = matrix.m42;
+
             document.addEventListener('mousemove', onMouseMove);
             document.addEventListener('mouseup', onMouseUp);
         }
 
         function onMouseMove(event) {
-            if (isDragging) {
-                const dx = event.clientX - startX;
-                const dy = event.clientY - startY;
-                solarSystem.style.transform = `translate(${initialTransformX + dx}px, ${initialTransformY + dy}px)`;
-            }
+            if (!isDragging) return;
+
+            const dx = event.clientX - startX;
+            const dy = event.clientY - startY;
+
+            // 드래그 시 현재 스케일 값을 반영
+            solarSystem.style.transform = `translate(${initialTransformX + dx}px, ${initialTransformY + dy}px) scale(${scale})`;
         }
 
         function onMouseUp() {
@@ -333,77 +291,33 @@ const commentSection = document.getElementById('commentSection');
             document.removeEventListener('mouseup', onMouseUp);
         }
 
-        // 행성 클릭 시 정보 표시 및 확대
-        planets.forEach(planet => {
-            planet.addEventListener('click', () => {
-                const planetName = planet.dataset.planet;
-                const data = planetData[planetName];
-                planetInfo.innerHTML = `<h3>${data.name}</h3><p>${data.description}</p>`;
-                planetInfo.style.display = 'block';
+        // 휠 이벤트로 줌인/줌아웃 처리
+        function handleWheel(event) {
+            event.preventDefault();
+            const delta = event.deltaY;
 
-                // 행성 확대
-                planet.style.transform = 'scale(1.5) translate(-33%, -33%)';
-                planet.style.zIndex = '15'; // 행성이 정보 위에 나타나지 않도록 설정
+            // 줌 인/아웃 계산
+            if (delta > 0) {
+                scale = Math.max(scale * 0.9, MIN_SCALE);
+            } else {
+                scale = Math.min(scale * 1.1, MAX_SCALE);
+            }
 
-                setTimeout(() => {
-                    planet.style.transform = 'translate(-50%, -50%)';
-                    planet.style.zIndex = ''; // 원래 z-index로 복원
-                }, 2000);
-            });
-        });
+            // 현재 transform 값을 가져와 저장
+            const transform = getComputedStyle(solarSystem).transform;
+            const matrix = new DOMMatrix(transform);
+            const currentX = matrix.m41;
+            const currentY = matrix.m42;
 
-        // 화면 드래그 시작
+            // 새로운 transform 적용 (기존 위치 + 스케일 적용)
+            solarSystem.style.transform = `translate(${currentX}px, ${currentY}px) scale(${scale})`;
+        }
+
+        // 휠 이벤트 리스너 추가
+        solarSystem.addEventListener('wheel', handleWheel, { passive: false });
+
+        // 마우스 드래그 시작 리스너 추가
         document.addEventListener('mousedown', onMouseDown);
-        let scale = 1;
-const MIN_SCALE = 0.5;
-const MAX_SCALE = 3;
-
-function handleWheel(event) {
-    event.preventDefault();
-    const delta = event.deltaY;
-    
-    // 줌 인/아웃 계산
-    if (delta > 0) {
-        scale = Math.max(scale * 0.9, MIN_SCALE);
-    } else {
-        scale = Math.min(scale * 1.1, MAX_SCALE);
-    }
-    
-    // 현재 변환 상태 가져오기
-    const transform = getComputedStyle(solarSystem).transform;
-    const matrix = new DOMMatrix(transform);
-    const currentX = matrix.m41;
-    const currentY = matrix.m42;
-    
-    // 새로운 변환 적용
-    solarSystem.style.transform = `translate(${currentX}px, ${currentY}px) scale(${scale})`;
-}
-
-// 휠 이벤트 리스너 추가
-solarSystem.addEventListener('wheel', handleWheel, { passive: false });
-
-// 기존 마우스 이벤트 핸들러 수정
-function onMouseMove(event) {
-    if (isDragging) {
-        const dx = event.clientX - startX;
-        const dy = event.clientY - startY;
-        solarSystem.style.transform = `translate(${initialTransformX + dx}px, ${initialTransformY + dy}px) scale(${scale})`;
-    }
-}
-
-// 마우스 드래그 시작 시 현재 scale 값도 고려
-function onMouseDown(event) {
-    isDragging = true;
-    startX = event.clientX;
-    startY = event.clientY;
-    const transform = getComputedStyle(solarSystem).transform;
-    const matrix = new DOMMatrix(transform);
-    initialTransformX = matrix.m41;
-    initialTransformY = matrix.m42;
-    scale = matrix.m11; // 현재 scale 값 저장
-    document.addEventListener('mousemove', onMouseMove);
-    document.addEventListener('mouseup', onMouseUp);
-}
     </script>
 </body>
 </html>

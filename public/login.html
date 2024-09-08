@@ -76,9 +76,10 @@
             <br>
             <label class="asdf">비밀번호</label>
             <input type="password" id='password' name="password" placeholder="비밀번호를 입력하세요." required>
-            <p class="warning">이메일 및 비밀번호를 다시 한번 확인하세요</p>
+            <p class="warning" id="warning">이메일 및 비밀번호를 다시 한번 확인하세요</p>
             <button type="submit" id="loginButton">로그인</button>   
         </form>        
+        <p class="signup-prompt" onclick="window.location.href='/signup'">계정도 없냐?</p>
     </div>
 
     <script>
@@ -90,8 +91,10 @@
         function checkInputs() {
             if (email.value.trim() !== '' && password.value.trim() !== '') {
                 loginButton.classList.add('active');
+                document.getElementById("warning").style.display="none";
             } else {
                 loginButton.classList.remove('active');
+                document.getElementById("warning").style.display="block";
             }
         }
 

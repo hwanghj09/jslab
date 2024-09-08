@@ -115,6 +115,8 @@
 <body>
     {% if islogin == False %}
     <div class="login-register" onclick="window.location.href='/login'">login / register</div>
+    {% else %}
+    <div class="login-register logout" onclick="window.location.href='/logout'">logout</div>
     {% endif %}
     <header>
         <h1>자바스크립트 실험실</h1>
