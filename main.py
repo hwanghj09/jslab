@@ -370,7 +370,3 @@ async def websocket_endpoint(websocket: WebSocket):
         
         time += 1
         await asyncio.sleep(0.1)  # Small 
-
-@app.get("/test")
-async def simulation_page(request: Request):
-    return templates.TemplateResponse("test.html", {"request": request})
