@@ -15,13 +15,13 @@
             height: 100vh;
             margin: 0;
             font-family: 'Arial', sans-serif;
-            position: relative; /* 절대 위치의 기준으로 사용 */
+            position: relative;
         }
 
         .login-register {
-            position: absolute; /* 절대 위치로 이동 */
-            top: 20px; /* 상단에서 20px 떨어지도록 설정 */
-            right: 20px; /* 오른쪽에서 20px 떨어지도록 설정 */
+            position: absolute;
+            top: 20px;
+            right: 20px;
             font-size: 18px;
             color: #333;
             margin: 0;
@@ -113,23 +113,28 @@
             position: relative;
             z-index: 1;
         }
+
+        /* 광고 영역 하단 고정 */
+        .kakao_ad_area {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            text-align: center;
+        }
     </style>
 </head>
 
 <body>
-    <ins class="kakao_ad_area" style="display:none;"
-data-ad-unit = "DAN-xXdUGbzEFy0bHdIC"
-data-ad-width = "728"
-data-ad-height = "90"></ins>
-<script type="text/javascript" src="//t1.daumcdn.net/kas/static/ba.min.js" async></script>
     {% if islogin == False %}
     <div class="login-register" onclick="window.location.href='/login'">login / register</div>
     {% else %}
     <div class="login-register logout" onclick="window.location.href='/logout'">logout</div>
     {% endif %}
+
     <header>
         <h1>자바스크립트 실험실</h1>
     </header>
+
     <div class="go-box-container">
         <div class="go-box fire" onclick="window.location='/실험/불꽃실험'">
             <span>불꽃실험</span>
@@ -150,6 +155,9 @@ data-ad-height = "90"></ins>
             <span>유체시물레이션</span>
         </div>
     </div>
+
+    <ins class="kakao_ad_area" data-ad-unit="DAN-xXdUGbzEFy0bHdIC" data-ad-width="728" data-ad-height="90"></ins>
+    <script type="text/javascript" src="//t1.daumcdn.net/kas/static/ba.min.js" async></script>
 </body>
 
 </html>
