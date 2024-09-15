@@ -1,25 +1,178 @@
-<!-- templates/index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Realtime Simulation</title>
+    <title>Lattice Boltzmann Simulation</title>
+    <style>
+        canvas {
+            border: 1px solid black;
+            width: 1000px;
+        }
+    </style>
 </head>
 <body>
-    <h1>유체 시물레이션</h1>
-    <img id="simulation-image" src="" alt="Simulation Plot">
-    
+    <canvas id="simulationCanvas"></canvas>
+    <div id="progress"></div>
     <script>
-        const ws = new WebSocket("ws://localhost:8000/ws");
-        
-        ws.onmessage = function(event) {
-            document.getElementById("simulation-image").src = "data:image/png;base64," + event.data;
-        };
-        
-        ws.onclose = function(event) {
-            console.log("WebSocket connection closed");
-        };
+        const Re = 200;
+        const maxIter = 500000;
+        const nx = 105, ny = 45;
+        const ly = ny - 1;
+        const uLB = 0.01;
+        const cx = Math.floor(nx / 6), cy = Math.floor(ny / 2), r = Math.floor(ny / 11);
+        const nulb = 1 * uLB * r / Re;
+        const omega = 1 / (3 * nulb + 0.5);
+
+        const ci = [
+            [1, 0], [0, 1], [-1, 0], [0, -1],
+            [1, 1], [-1, 1], [-1, -1], [1, -1],
+            [0, 0]
+        ];
+
+        const wi = [1/9, 1/9, 1/9, 1/9, 1/36, 1/36, 1/36, 1/36, 4/9];
+
+        const colLeft = [0, 4, 7];
+        const colRest = [1, 3, 8];
+        const colRight = [2, 5, 6];
+        const colWall = [2, 3, 0, 1, 5, 6, 7, 6, 8];
+
+        function createArray(dimensions) {
+            if (dimensions.length > 1) {
+                return Array.from({ length: dimensions[0] }, () => 
+                    createArray(dimensions.slice(1)));
+            } else {
+                return new Array(dimensions[0]).fill(0);
+            }
+        }
+
+        function macroscopic(fin) {
+            const rho = createArray([nx, ny]);
+            const u = createArray([2, nx, ny]);
+
+            for (let x = 0; x < nx; x++) {
+                for (let y = 0; y < ny; y++) {
+                    rho[x][y] = fin.reduce((sum, f) => sum + f[x][y], 0);
+                    for (let i = 0; i < 9; i++) {
+                        u[0][x][y] += ci[i][0] * fin[i][x][y];
+                        u[1][x][y] += ci[i][1] * fin[i][x][y];
+                    }
+                    u[0][x][y] /= rho[x][y];
+                    u[1][x][y] /= rho[x][y];
+                }
+            }
+            return [rho, u];
+        }
+
+        function equilibrium(rho, u) {
+            const feq = createArray([9, nx, ny]);
+            for (let x = 0; x < nx; x++) {
+                for (let y = 0; y < ny; y++) {
+                    const usqr = (3/2) * (u[0][x][y]**2 + u[1][x][y]**2);
+                    for (let i = 0; i < 9; i++) {
+                        const cu = 3 * (ci[i][0] * u[0][x][y] + ci[i][1] * u[1][x][y]);
+                        feq[i][x][y] = rho[x][y] * wi[i] * (1 + cu + 0.5 * cu**2 - usqr);
+                    }
+                }
+            }
+            return feq;
+        }
+
+        const obstacle = createArray([nx, ny]);
+        for (let x = 0; x < nx; x++) {
+            for (let y = 0; y < ny; y++) {
+                obstacle[x][y] = ((x - cx)**2 + (y - cy)**2 <= r**2);
+            }
+        }
+
+        const u = createArray([2, nx, ny]);
+        for (let x = 0; x < nx; x++) {
+            for (let y = 0; y < ny; y++) {
+                u[0][x][y] = uLB;
+            }
+        }
+
+        let fin = equilibrium(createArray([nx, ny]).map(row => row.fill(1)), u);
+
+        const canvas = document.getElementById('simulationCanvas');
+        canvas.width = nx;
+        canvas.height = ny;
+        const ctx = canvas.getContext('2d');
+
+        function updateSimulation() {
+            for (let i = 0; i < 100; i++) {  // Run 100 iterations per frame
+                // Right wall: outflow condition
+                for (let i of colRight) {
+                    for (let y = 0; y < ny; y++) {
+                        fin[i][nx-1][y] = fin[i][nx-2][y];
+                    }
+                }
+
+                // Compute macroscopic variables
+                let [rho, u] = macroscopic(fin);
+
+                // Left wall: inflow condition
+                for (let y = 0; y < ny; y++) {
+                    u[0][0][y] = uLB;
+                    u[1][0][y] = 0;
+                    rho[0][y] = 1 / (1 - u[0][0][y]) * (
+                        colRest.reduce((sum, i) => sum + fin[i][0][y], 0) +
+                        2 * colRight.reduce((sum, i) => sum + fin[i][0][y], 0)
+                    );
+                }
+
+                // Compute equilibrium
+                const feq = equilibrium(rho, u);
+
+                // Left wall: Zou/He boundary condition
+                for (let i of colLeft) {
+                    for (let y = 0; y < ny; y++) {
+                        fin[i][0][y] = feq[i][0][y] + fin[colRight[colLeft.indexOf(i)]][0][y] - feq[colRight[colLeft.indexOf(i)]][0][y];
+                    }
+                }
+
+                // Collision step
+                const fout = createArray([9, nx, ny]);
+                for (let i = 0; i < 9; i++) {
+                    for (let x = 0; x < nx; x++) {
+                        for (let y = 0; y < ny; y++) {
+                            fout[i][x][y] = fin[i][x][y] - omega * (fin[i][x][y] - feq[i][x][y]);
+                            if (obstacle[x][y]) {
+                                fout[i][x][y] = fin[colWall[i]][x][y];
+                            }
+                        }
+                    }
+                }
+
+                // Streaming step
+                for (let i = 0; i < 9; i++) {
+                    for (let x = 0; x < nx; x++) {
+                        for (let y = 0; y < ny; y++) {
+                            const newX = (x + ci[i][0] + nx) % nx;
+                            const newY = (y + ci[i][1] + ny) % ny;
+                            fin[i][newX][newY] = fout[i][x][y];
+                        }
+                    }
+                }
+            }
+
+            // Visualization
+            const [rho, u] = macroscopic(fin);
+            const imageData = ctx.createImageData(nx, ny);
+            for (let x = 0; x < nx; x++) {
+                for (let y = 0; y < ny; y++) {
+                    const velocity = Math.sqrt(u[0][x][y]**2 + u[1][x][y]**2);
+                    const index = (y * nx + x) * 4;
+                    imageData.data[index] = velocity * 10000;  // Red channel
+                    imageData.data[index + 3] = 255;  // Alpha channel
+                }
+            }
+            ctx.putImageData(imageData, 0, 0);
+
+            requestAnimationFrame(updateSimulation);
+        }
+
+        updateSimulation();
     </script>
 </body>
 </html>
