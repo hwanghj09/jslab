@@ -6,7 +6,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Nanum+Gothic:wght@400;700&display=swap" rel="stylesheet">
     <title>식물의 성장 단계와 실시간 날씨</title>
     <style>
-        body {
+         body {
             font-family: 'Nanum Gothic', sans-serif;
             margin: 0;
             padding: 0;
@@ -36,50 +36,10 @@
             cursor: pointer;
         }
 
-        .seed {
-            width: 20px;
-            height: 20px;
-            background-color: #472005;
-            border-radius: 50%;
-            margin: 0 auto;
-        }
-
-        .sprout {
-            width: 10px;
-            height: 50px;
-            background-color: #4caf50;
-            margin: 0 auto;
+        .plant-image {  
             position: relative;
-        }
-
-        .sprout::before {
-            content: '';
-            position: absolute;
-            top: -10px;
-            left: -5px;
-            width: 20px;
-            height: 20px;
-            background-color: #81c784;
-            border-radius: 50% 50% 0 0;
-        }
-
-        .full-plant {
-            width: 10px;
-            height: 150px;
-            background-color: #4caf50;
-            margin: 0 auto;
-            position: relative;
-        }
-
-        .full-plant::before {
-            content: '';
-            position: absolute;
-            top: -50px;
-            left: -45px;
-            width: 100px;
-            height: 100px;
-            background-color: #81c784;
-            border-radius: 50%;
+            top: 6px;
+            object-fit: contain;
         }
 
         .explanation {
@@ -324,13 +284,13 @@
     <div class="ground"></div>
     <div class="plant-container">
         <div class="plant-stage" onclick="showExplanation('seed')">
-            <div class="seed"></div>
+            <img src="../image/씨앗.png" alt="씨앗" class="plant-image" style="width: 10px;">
         </div>
         <div class="plant-stage" onclick="showExplanation('sprout')">
-            <div class="sprout"></div>
+            <img src="../image/새싹.png" alt="새싹" class="plant-image" style="width: 60px;">
         </div>
         <div class="plant-stage" onclick="showExplanation('full-plant')">
-            <div class="full-plant"></div>
+            <img src="../image/꽃.png" alt="성체 식물" class="plant-image" style="width: 100px;">
         </div>
     </div>
 
