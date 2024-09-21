@@ -116,10 +116,36 @@
 
         /* 광고 영역 하단 고정 */
         .kakao_ad_area {
-            position: absolute;
-            bottom: 0;
             width: 100%;
             text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .kakao_ad_area.banner {
+            width: 728px; /* 가로형 광고 */
+            height: 90px;
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .kakao_ad_area.sidebar {
+            width: 160px; /* 세로형 사이드바 광고 */
+            height: 600px;
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .kakao_ad_area.rectangle {
+            width: 300px;
+            height: 250px;
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
         }
     </style>
 </head>
@@ -156,8 +182,13 @@
         </div>
     </div>
 
-    <ins class="kakao_ad_area" data-ad-unit="DAN-xXdUGbzEFy0bHdIC" data-ad-width="728" data-ad-height="90"></ins>
+    <ins class="kakao_ad_area banner" data-ad-unit="DAN-xXdUGbzEFy0bHdIC" data-ad-width="728" data-ad-height="90"></ins>
     <script type="text/javascript" src="//t1.daumcdn.net/kas/static/ba.min.js" async></script>
+    <ins class="kakao_ad_area sidebar" data-ad-unit="DAN-4BcFq4mOzvUCmGND" data-ad-width="160" data-ad-height="600"></ins>
+    <script type="text/javascript" src="//t1.daumcdn.net/kas/static/ba.min.js" async></script>
+    <ins class="kakao_ad_area rectangle" data-ad-unit="DAN-9EAI9qmVJ0mvIZgY" data-ad-width="300" data-ad-height="250"></ins>
+    <script type="text/javascript" src="//t1.daumcdn.net/kas/static/ba.min.js" async></script>
+
 </body>
 
 </html>
