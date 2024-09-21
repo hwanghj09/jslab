@@ -10,9 +10,8 @@
             background-color: #f0f0f0;
             display: flex;
             flex-direction: column;
-            justify-content: center;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh;
             margin: 0;
             font-family: 'Arial', sans-serif;
             position: relative;
@@ -29,7 +28,7 @@
 
         header {
             text-align: center;
-            margin-bottom: 50px;
+            margin: 30px 0;
         }
 
         header h1 {
@@ -38,11 +37,22 @@
             margin: 0;
         }
 
+        .content-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+        }
+
         .go-box-container {
             display: flex;
             gap: 30px;
-            flex-wrap: wrap;
+            flex-wrap: wrap-reverse;
             justify-content: center;
+            max-width: 800px;
         }
 
         .go-box {
@@ -114,39 +124,34 @@
             z-index: 1;
         }
 
-        /* 광고 영역 하단 고정 */
-        .kakao_ad_area {
+        .ad-sidebar {
+        width: 160px;
+        position: absolute;
+        top: 50px;
+        right: 0px;
+    }
+
+        .ad-top {
             width: 100%;
-            text-align: center;
-            margin-bottom: 20px;
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
         }
 
-        .kakao_ad_area.banner {
-            width: 728px; /* 가로형 광고 */
-            height: 90px;
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-        }
-
-        .kakao_ad_area.sidebar {
-            width: 160px; /* 세로형 사이드바 광고 */
-            height: 600px;
-            position: absolute;
-            right: 0;
-            top: 50%;
-            transform: translateY(-50%);
-        }
-
-        .kakao_ad_area.rectangle {
-            width: 300px;
-            height: 250px;
+        .ad-mobile {
             position: absolute;
             left: 0;
-            top: 50%;
-            transform: translateY(-50%);
+            bottom: 0;
+            z-index: 1000;
         }
+
+        .ad-bottom {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+        }
+
     </style>
 </head>
 
@@ -156,39 +161,62 @@
     {% else %}
     <div class="login-register logout" onclick="window.location.href='/logout'">logout</div>
     {% endif %}
+    <div class="ad-top">
+        <ins class="kakao_ad_area" style="display:none;"
+            data-ad-unit="DAN-xXdUGbzEFy0bHdIC"
+            data-ad-width="728"
+            data-ad-height="90"></ins>
+    </div>
 
     <header>
         <h1>자바스크립트 실험실</h1>
     </header>
 
-    <div class="go-box-container">
-        <div class="go-box fire" onclick="window.location='/실험/불꽃실험'">
-            <span>불꽃실험</span>
+    <div class="content-wrapper">
+        <div class="go-box-container">
+            <div class="go-box fire" onclick="window.location='/실험/불꽃실험'">
+                <span>불꽃실험</span>
+            </div>
+            <div class="go-box circuit" onclick="window.location='/실험/전기회로'">
+                <span>전기회로</span>
+            </div>
+            <div class="go-box solar" onclick="window.location='/실험/태양계'">
+                <span>태양계</span>
+            </div>
+            <div class="go-box plants" onclick="window.location='/실험/식물과에너지'">
+                <span>식물과에너지</span>
+            </div>
+            <div class="go-box solubility" onclick="window.location='/실험/용해도'">
+                <span>용해도</span>
+            </div>
+            <div class="go-box giche" onclick="window.location='/실험/유체시물레이션'">
+                <span>유체시물레이션</span>
+            </div>
         </div>
-        <div class="go-box circuit" onclick="window.location='/실험/전기회로'">
-            <span>전기회로</span>
-        </div>
-        <div class="go-box solar" onclick="window.location='/실험/태양계'">
-            <span>태양계</span>
-        </div>
-        <div class="go-box plants" onclick="window.location='/실험/식물과에너지'">
-            <span>식물과에너지</span>
-        </div>
-        <div class="go-box solubility" onclick="window.location='/실험/용해도'">
-            <span>용해도</span>
-        </div>
-        <div class="go-box giche" onclick="window.location='/실험/유체시물레이션'">
-            <span>유체시물레이션</span>
-        </div>
+
+        
+    </div>
+    <div class="ad-sidebar">
+        <ins class="kakao_ad_area" style="display:none;"
+            data-ad-unit="DAN-4BcFq4mOzvUCmGND"
+            data-ad-width="160"
+            data-ad-height="600"></ins>
+    </div>
+    <div class="ad-mobile">
+        <ins class="kakao_ad_area" style="display:none;"
+            data-ad-unit="DAN-9EAI9qmVJ0mvIZgY"
+            data-ad-width="320"
+            data-ad-height="100"></ins>
     </div>
 
-    <ins class="kakao_ad_area banner" data-ad-unit="DAN-xXdUGbzEFy0bHdIC" data-ad-width="728" data-ad-height="90"></ins>
-    <script type="text/javascript" src="//t1.daumcdn.net/kas/static/ba.min.js" async></script>
-    <ins class="kakao_ad_area sidebar" data-ad-unit="DAN-4BcFq4mOzvUCmGND" data-ad-width="160" data-ad-height="600"></ins>
-    <script type="text/javascript" src="//t1.daumcdn.net/kas/static/ba.min.js" async></script>
-    <ins class="kakao_ad_area rectangle" data-ad-unit="DAN-9EAI9qmVJ0mvIZgY" data-ad-width="300" data-ad-height="250"></ins>
-    <script type="text/javascript" src="//t1.daumcdn.net/kas/static/ba.min.js" async></script>
+    <div class="ad-bottom">
+        <ins class="kakao_ad_area" style="display:none;"
+            data-ad-unit="DAN-oOBhpFJ9RyLpbudK"
+            data-ad-width="300"
+            data-ad-height="250"></ins>
+    </div>
 
+    <script type="text/javascript" src="//t1.daumcdn.net/kas/static/ba.min.js" async></script>
 </body>
 
 </html>
