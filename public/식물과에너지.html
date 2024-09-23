@@ -263,6 +263,34 @@
             cursor: pointer;
             transition: background-color 0.2s;
         }
+        .arrow {
+    width: 5px;
+    height: 5px;
+    border: solid black;
+    border-width: 0 3px 3px 0;
+    display: inline-block;
+    padding: 3px;
+    margin-bottom: 10px;
+    transform: rotate(45deg) !important; /* !important 추가 */
+    animation: bounce 1s infinite;
+}
+
+
+    .arrow.up {
+        position: relative;
+    }
+
+    @keyframes bounce {
+        0%, 20%, 50%, 80%, 100% {
+            transform: translateY(0);
+        }
+        40% {
+            transform: translateY(-10px);
+        }
+        60% {
+            transform: translateY(-5px);
+        }
+    }
     </style>
 </head>
 <body>
@@ -285,12 +313,15 @@
     <div class="ground"></div>
     <div class="plant-container">
         <div class="plant-stage" onclick="showExplanation('seed')">
+            <div class="arrow up" style="bottom:20px; left: 15px;"></div>
             <img src="../image/씨앗.png" alt="씨앗" class="plant-image" style="width: 10px;">
         </div>
         <div class="plant-stage" onclick="showExplanation('sprout')">
+            <div class="arrow up" style="bottom:120px; left: 40px;"></div>
             <img src="../image/새싹.png" alt="새싹" class="plant-image" style="width: 60px;">
         </div>
         <div class="plant-stage" onclick="showExplanation('full-plant')">
+            <div class="arrow up" style="bottom:220px; left: 65px;"></div>
             <img src="../image/꽃.png" alt="성체 식물" class="plant-image" style="width: 100px;">
         </div>
     </div>
@@ -320,8 +351,8 @@
     
     <div class="weather-info" id="weatherInfo">
         <h2>현재 날씨 정보</h2>
-        <p id="rainfallInfo">강수량: </p>
-        <p id="skyStatusInfo">하늘 상태: </p>
+        <p id="skywea">날씨: </p>
+        <p id="gion">기온: </p>
     </div>
 
     <button class="button" onclick="goToMain()">돌아가기</button>
@@ -427,50 +458,41 @@ const commentSection = document.getElementById('commentSection');
             };
         }
 
-        async function getWeatherAndApplyEffects() {
+        async function getWeather() {
+            const city = "Seoul";
+            const apiKey = "3db8cc2bf2d62c14f2517545a33e655a";
+            const lang = "kr";
+            const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&lang=${lang}&units=metric`;
+            console.log(url);
             try {
-                const position = await new Promise((resolve, reject) => {
-                    navigator.geolocation.getCurrentPosition(resolve, reject, { timeout: 10000 });
-                });
+                const response = await axios.get(url);
+                const data = response.data;
 
-                const lat = position.coords.latitude;
-                const lon = position.coords.longitude;
-                
-                const gridCoord = convertToGridCoord(lat, lon);
-                
-                const apiKey = 'DYoMvwKMGezxrdvkut2Pm5zF2ifEhO954vPneEy7VX%2Bb13ovcevvhDynHE%2FB7Inx%2F%2BgDY%2FFo55p0JIAwuc5J6g%3D%3D';
-                const now = new Date();
-                const baseDate = formatDate(now);
-                const baseTime = formatTime(new Date(now.getTime() - 1 * 60 * 60 * 1000));
-
-                const apiUrl = `http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getUltraSrtNcst?serviceKey=${apiKey}&pageNo=1&numOfRows=10&dataType=JSON&base_date=${baseDate}&base_time=${baseTime}&nx=${gridCoord.nx}&ny=${gridCoord.ny}`;
-
-                const response = await axios.get(apiUrl);
-                const weatherData = response.data.response.body.items.item || [];
-
-                console.log('API Response:', response.data);
-
-                const rainfall = weatherData.find(item => item.category === 'RN1')?.obsrValue || 0;
-                const skyStatus = weatherData.find(item => item.category === 'SKY')?.obsrValue || 0;
-                const temperature = weatherData.find(item => item.category === 'TMP')?.obsrValue || 0;
-
-                document.getElementById('rainfallInfo').textContent = `강수량: ${rainfall} mm`;
-                document.getElementById('skyStatusInfo').textContent = `하늘 상태: ${skyStatus}`;
-
-                document.getElementById('weatherEffects').innerHTML = '';
-                document.getElementById('weatherInfo').style.backgroundColor = 'rgba(255, 255, 255, 0.9)';
-
-                if (rainfall > 0) {
-                    createRainEffect();
-                } else if (skyStatus >= 3) {
-                    createCloudEffect();
-                } else if (temperature >= 30) {
-                    createHeatWaveEffect();
-                } else if (skyStatus == 1) {
-                    createSunEffect();
-                }
+                console.log(`${data.name}의 날씨`);
+                console.log(`날씨: ${data.weather[0].description}`);
+                document.getElementById('skywea').textContent=data.weather[0].description;
+                document.getElementById('gion').textContent='기온 : '+data.main.temp+"°C";
+                console.log(`현재 온도: ${data.main.temp}°C`);
+                console.log(`체감 온도: ${data.main.feels_like}°C`);
+                console.log(`습도: ${data.main.humidity}%`);
+                console.log(`풍속: ${data.wind.speed} m/s`);
+                applyWeatherEffects(data);
             } catch (error) {
                 console.error('날씨 정보를 가져오는 데 실패했습니다:', error);
+            }
+        }
+        function applyWeatherEffects(weatherData) {
+            const weatherEffects = document.getElementById('weatherEffects');
+            weatherEffects.innerHTML = ''; // 기존 효과 제거
+
+            if (weatherData.rain) {
+                createRainEffect();
+            } else if (weatherData.clouds.all > 50) {
+                createCloudEffect();
+            } else if (weatherData.main.temp >= 30) {
+                createHeatWaveEffect();
+            } else {
+                createSunEffect();
             }
         }
 
@@ -509,8 +531,25 @@ const commentSection = document.getElementById('commentSection');
         }
 
         window.onload = function() {
-            getWeatherAndApplyEffects();
+            getWeather();
+            getUserLocation();
         };
+        const lat=0;
+        const lon=0;
+        function getUserLocation() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition((position) => {
+                lat, lon = position.coords;
+                console.log(lat, lon);
+            }, (error) => {
+                console.error('Error getting location:', error);
+                document.getElementById('weatherDetails').innerHTML = '위치를 불러올 수 없습니다.';
+            });
+        } else {
+            document.getElementById('weatherDetails').innerHTML = '브라우저에서 위치 정보를 지원하지 않습니다.';
+        }
+    }
+
     </script>
 </body>
 </html>
