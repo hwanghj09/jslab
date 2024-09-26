@@ -8,7 +8,7 @@
     <style>
         :root {
             --primary-color: #000000;
-            --secondary-color: #000000;
+            --secondary-color: #4CAF50;
             --background-color: #ecf0f1;
             --text-color: #2c3e50;
         }
@@ -76,19 +76,21 @@
             margin-top: 20px;
         }
         button {
-            cursor: pointer;
-            font-weight: bold;
+            z-index: 999;
             padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            background-color: var(--primary-color);
+            font-size: 18px;
+            background-color: #4CAF50;
             color: white;
-            transition: background-color 0.3s, transform 0.2s;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: transform 0.2s, background-color 0.2s, box-shadow 0.2s;
         }
-
+        
         button:hover {
-            background-color: var(--secondary-color);
-            transform: translateY(-2px);
+            transform: scale(1.05);
+            background-color: #45a049;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
     </style>
 </head>
@@ -97,12 +99,12 @@
         <h1>전기 회로</h1>  
         <div class="circuit-types">
             <div class="circuit-type">
-                <h2>직렬 연결</h2>
+                <h2 style="color: black;">직렬 연결</h2>
                 <p>직렬 연결에서는 전류가 한 경로로만 흐릅니다. 하나의 전구가 고장나면 모든 전구가 꺼집니다.</p>
                 <a href="/실험/전기회로-직">직렬 회로 보기</a>
             </div>
             <div class="circuit-type">
-                <h2>병렬 연결</h2>
+                <h2 style="color: black;">병렬 연결</h2>
                 <p>병렬 연결에서는 전류가 여러 경로로 나뉘어 흐릅니다. 하나의 전구가 고장나도 다른 전구는 계속 작동합니다.</p>
                 <a href="/실험/전기회로-병">병렬 회로 보기</a>
             </div>

@@ -15,6 +15,23 @@
             margin-top: 10px;
             font-family: Arial, sans-serif;
         }
+        .button {
+            z-index: 999;
+            padding: 10px 20px;
+            font-size: 18px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: transform 0.2s, background-color 0.2s, box-shadow 0.2s;
+        }
+        
+        .button:hover {
+            transform: scale(1.05);
+            background-color: #45a049;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
     </style>
 </head>
 <body>
@@ -23,7 +40,7 @@
     <button id="startBtn">시작</button>
     <button id="resetBtn">리셋</button>
     <div id="energyInfo"></div>
-
+    <button class="button" onclick="window.location.href='/index'">돌아가기</button>
     <script>
         const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
