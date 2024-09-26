@@ -3,105 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lattice Boltzmann Simulation</title>
-    <meta name="google-site-verification" content="8KcUKjvAz9EDMV1cHZVJ5rOiKQCN9KaMAfOaZr61JyA" />
+    <title>포물선운동</title>
     <style>
         body {
             font-family: 'Roboto', sans-serif;
             margin: 0;
             padding: 0;
-        }
-        .comment-section {
-            position: fixed;
-            top: 0;
-            left: -400px;
-            width: 350px;
-            height: 100%;
-            background-color: #f8f8f8;
-            box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
-            transition: left 0.3s ease-in-out;
-            z-index: 10000;
-            display: flex;
-            flex-direction: column;
-        }
-        .comment-section.open {
-            left: 0;
-        }
-        .comment-header {
-            padding: 10px;
-            color: #000000;
-            font-size: 20px;
-            font-weight: 700;
             text-align: center;
-        }
-        .comment-body {
-            padding: 10px;
-            flex-grow: 1;
-            overflow-y: auto;
-        }
-        .comment {
-            background-color: #fff;
-            border-radius: 8px;
-            padding: 15px;
-            margin-bottom: 15px;
-        }
-        .comment p {
-            margin: 0 0 10px 0;
-            line-height: 1.4;
-        }
-        .comment-input {
-            width: calc(100% - 80px);
-            padding: 15px;
-            margin: 20px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            font-size: 16px;
-            resize: vertical;
-            min-height: 100px;
-            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
-        }
-        .comment-submit {
-            width: calc(100% - 50px);
-            padding: 15px;
-            margin: 0 20px 20px;
-            background-color: #4CAF50;
-            color: #fff;
-            border: none;
-            border-radius: 8px;
-            font-size: 18px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: background-color 0.2s;
-        }
-        .comment-submit:hover {
-            background-color: #45a049;
-        }
-        .eotrmf {
-            position: fixed;
-            top: 10px;
-            right: 30px;
-            font-size: 24px;
-            color: #000000;
-            width: 50px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: background-color 0.2s;
-        }
-        .home-button {
-            position: fixed;
-            padding: 10px 20px;
-            background-color: #4CAF50;
-            color: white;
-            text-decoration: none;
-            border-radius: 5px;
-            font-weight: bold;
         }
         .simulation-container {
             margin: 20px;
-            text-align: center;
         }
         #simulationCanvas {
             border: 1px solid black;
@@ -116,142 +27,53 @@
     </style>
 </head>
 <body>
-
-    <div class="eotrmf">💬</div>
-    <div class="comment-section" id="commentSection">
-        <div class="comment-header">댓글</div>
-        <hr>
-        <div class="comment-body" id="commentBody">
-            {% for comment in comments %}
-            <div class="comment">
-                <p>{{ comment.content }}</p>
-            </div>
-            {% endfor %}
-        </div>
-        {% if islogin == True %}
-        <textarea class="comment-input" id="commentInput" placeholder="댓글을 입력하세요..."></textarea>
-        <button class="comment-submit" onclick="addcomment()">댓글 추가</button>
-        {% endif %}
-    </div>
-    <a href="/index" class="home-button">돌아가기</a>
-
     <div class="simulation-container">
-        <h1>포물선 운동</h1>
+        <h1>포물선운동</h1>
         <canvas id="simulationCanvas" width="800" height="400"></canvas>
         <div class="controls">
-            <label for="angle">각도</label>
+            <label for="angle">각도 (degrees): </label>
             <input type="range" id="angle" class="slider" min="0" max="90" value="45">
             <span id="angleValue">45</span>°
         </div>
         <div class="controls">
-            <label for="force">힘</label>
-            <input type="range" id="force" class="slider" min="0" max="100" value="50">
-            <span id="forceValue">50</span> N
+            <label for="velocity">초기 속도 (m/s): </label>
+            <input type="range" id="velocity" class="slider" min="0" max="100" value="50">
+            <span id="velocityValue">50</span> m/s
         </div>
         <div class="controls">
-            <label for="mass">질량</label>
+            <label for="mass">질량 (kg): </label>
             <input type="range" id="mass" class="slider" min="1" max="10" value="5">
             <span id="massValue">5</span> kg
         </div>
-        <div class="controls">
-            <label for="size">공 크기</label>
-            <input type="range" id="size" class="slider" min="5" max="50" value="10">
-            <span id="sizeValue">10</span> px
-        </div>
-        <div class="controls">
-            <label for="wind">바람 세기</label>
-            <input type="range" id="wind" class="slider" min="0" max="20" value="0">
-            <span id="windValue">0</span> m/s
-        </div>
-        <div class="controls">
-            <label for="windDirection">바람 방향</label>
-            <select id="windDirection">
-                <option value="1">오른쪽</option>
-                <option value="-1">왼쪽</option>
-            </select>
-        </div>
         <button onclick="launchProjectile()">Launch</button>
-        <div>
-            <h3>에너지</h3>
-            <p>위치 에너지: <span id="potentialEnergy">0</span> J</p>
-            <p>운동 에너지: <span id="kineticEnergy">0</span> J</p>
-            <p>역학적 에너지: <span id="mechanicalEnergy">0</span> J</p>
+
+        <div class="results">
+            <p>최대 높이: <span id="maxHeight">0</span> m</p>
+            <p>최대 거리: <span id="maxDistance">0</span> m</p>
         </div>
     </div>
-    <div class="controls">
-        <label for="airResistance">공기 저항 적용</label>
-        <input type="checkbox" id="airResistance" checked>
-    </div>
-    
+
     <script>
-        let interval; // 전역 변수로 설정하여 애니메이션을 제어
-        document.querySelector('.eotrmf').addEventListener('click', () => {
-            document.getElementById('commentSection').classList.toggle('open');
-        });
-
-        function addcomment() {
-            const commentSection = document.getElementById('commentSection');
-            const commentInput = document.getElementById('commentInput');
-            const commentBody = document.getElementById('commentBody');
-            const postId = 7; // 실제 포스트 ID로 교체해야 함
-
-            const newCommentText = commentInput.value.trim();
-            if (newCommentText === '') return; // 빈 댓글은 추가하지 않음
-
-            // 댓글을 추가하는 요청
-            fetch(`/comments/${postId}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    'X-Requested-With': 'XMLHttpRequest'
-                },
-                body: new URLSearchParams({
-                    content: newCommentText
-                })
-            })
-            .then(response => {
-                if (response.ok) {
-                    return response.json();
-                } else {
-                    throw new Error('댓글 추가에 실패했습니다.');
-                }
-            })
-            .then(newComment => {
-                // 댓글 추가 성공 시 댓글을 DOM에 추가
-                const commentElement = document.createElement('div');
-                commentElement.className = 'comment';
-                commentElement.innerHTML = `<p>${newComment.content}</p>`;
-                commentBody.appendChild(commentElement);
-                commentInput.value = ''; // 입력 필드 초기화
-            })
-            .catch(error => {
-                console.error('댓글 추가 중 오류 발생:', error);
-                alert('댓글 추가에 실패했습니다.');
-            });
-        }
-
         const canvas = document.getElementById("simulationCanvas");
         const ctx = canvas.getContext("2d");
 
-        const g = 9.8; // 중력 가속도
+        const g = 9.8; // gravitational acceleration (m/s^2)
         let angle = document.getElementById("angle").value;
-        let force = document.getElementById("force").value;
+        let velocity = document.getElementById("velocity").value;
         let mass = document.getElementById("mass").value;
-        let size = document.getElementById("size").value;
-        let wind = document.getElementById("wind").value;
-        let windDirection = document.getElementById("windDirection").value;
-        const airResistanceConstant = 0.01;
+        const cannonLength = 50; // 대포 길이
 
-        // 이벤트 리스너로 각 슬라이더 값 업데이트
+        let animation; // animation interval 저장용 변수
+
         document.getElementById("angle").addEventListener("input", function() {
             angle = this.value;
             document.getElementById("angleValue").innerText = angle;
-            drawCannon();
+            drawCannon(); // 각도 변경 시 대포 다시 그리기
         });
 
-        document.getElementById("force").addEventListener("input", function() {
-            force = this.value;
-            document.getElementById("forceValue").innerText = force;
+        document.getElementById("velocity").addEventListener("input", function() {
+            velocity = this.value;
+            document.getElementById("velocityValue").innerText = velocity;
         });
 
         document.getElementById("mass").addEventListener("input", function() {
@@ -259,94 +81,113 @@
             document.getElementById("massValue").innerText = mass;
         });
 
-        document.getElementById("size").addEventListener("input", function() {
-            size = this.value;
-            document.getElementById("sizeValue").innerText = size;
-        });
-
-        document.getElementById("wind").addEventListener("input", function() {
-            wind = this.value;
-            document.getElementById("windValue").innerText = wind;
-        });
-
-        document.getElementById("windDirection").addEventListener("change", function() {
-            windDirection = this.value;
-        });
-
-        // 초기 대포 위치와 모양 그리기
-        drawCannon();
-
         function drawCannon() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height); // 캔버스 지우기
-            ctx.save(); // 현재 상태 저장
-            ctx.translate(100, canvas.height - 50); // 대포의 중심 이동
-            ctx.rotate(-angle * Math.PI / 180); // 대포 각도 적용
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.save();
+
+            // 대포 중심 좌표
+            const cannonBaseX = 50;
+            const cannonBaseY = canvas.height - 30;
+
+            // 대포 각도 변환
+            ctx.translate(cannonBaseX, cannonBaseY);
+            ctx.rotate(-angle * Math.PI / 180);
+
+            // 대포 그리기
+            ctx.fillStyle = "gray";
+            ctx.fillRect(0, -5, cannonLength, 10);
+
+            ctx.restore();
             ctx.fillStyle = "black";
-            ctx.fillRect(0, -10, 50, 20); // 대포 그리기
-            ctx.restore(); // 이전 상태로 복구
+            ctx.beginPath();
+            ctx.arc(cannonBaseX, cannonBaseY, 20, 0, Math.PI * 2); // 대포 바닥
+            ctx.fill();
         }
+
         function launchProjectile() {
-    if (interval) {
-        clearInterval(interval); // 기존 애니메이션 중지
-    }
-
-    const initialVelocity = force / mass; 
-    const radianAngle = angle * Math.PI / 180;
-
-    let initialVelocityX = initialVelocity * Math.cos(radianAngle);
-    let initialVelocityY = initialVelocity * Math.sin(radianAngle);
-
-    let x = 100; // 대포 위치
-    let y = canvas.height - 50;
-    
-    interval = setInterval(() => {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        drawCannon();
-
-        // 바람 적용
-        x += initialVelocityX + windDirection * wind;
-        y -= initialVelocityY - (g / 2); // 중력 적용
-
-        // 벽면에 튕기도록 수정
-        if (x >= canvas.width - size / 2) {
-            x = canvas.width - size / 2; // 위치 조정
-            initialVelocityX *= -1; // x 속도 반전
-        } else if (x <= size / 2) {
-            x = size / 2; // 위치 조정
-            initialVelocityX *= -1; // x 속도 반전
-        }
-
-        // 바닥에 닿았을 때 튕기도록 수정
-        if (y >= canvas.height - size / 2) {
-            y = canvas.height - size / 2; // 위치 조정
-            initialVelocityY *= -0.7; // y 속도 반전 및 감쇠
-        } else {
-            // 공기 저항 적용 여부 확인
-            if (document.getElementById("airResistance").checked) {
-                initialVelocityX -= airResistanceConstant * initialVelocityX;
-                initialVelocityY -= airResistanceConstant * initialVelocityY;
+            // 이전에 실행 중인 애니메이션 중지
+            if (animation) {
+                clearInterval(animation);
             }
+
+            let time = 0;
+            let interval = 10; // time interval in milliseconds
+            let angleRad = angle * (Math.PI / 180); // convert angle to radians
+
+            let vX = velocity * Math.cos(angleRad);
+            let vY = velocity * Math.sin(angleRad);
+
+            let x = 50 + cannonLength * Math.cos(angleRad); // 발사 시작 x 좌표
+            let y = canvas.height - 30 - cannonLength * Math.sin(angleRad); // 발사 시작 y 좌표
+
+            let trajectory = []; // 궤적 저장용 배열
+            let maxHeight = { x: x, y: y }; // 최고점 좌표 저장
+            let isOnGround = false; // 바닥에 닿았는지 여부
+            let distance = 0; // 최대 거리 저장
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            drawCannon(); // 대포 그리기
+
+            // 최대 높이 계산
+            const calculatedMaxHeight = (Math.pow(velocity * Math.sin(angleRad), 2) / (2 * g)).toFixed(2);
+            document.getElementById('maxHeight').innerText = calculatedMaxHeight;
+
+            function drawProjectile() {
+                if (!isOnGround) {
+                    // Calculate position
+                    x = 50 + cannonLength * Math.cos(angleRad) + vX * time;
+                    y = canvas.height - 30 - (cannonLength * Math.sin(angleRad) + vY * time - 0.5 * g * Math.pow(time, 2));
+
+                    // 바닥에 닿으면 y 좌표를 바닥에 고정하고 멈춤
+                    if (y > canvas.height - 5) {
+                        y = canvas.height - 5; // 바닥에 맞춤
+                        isOnGround = true; // 바닥에 닿았음을 표시
+                        distance = x.toFixed(2); // x 좌표를 최대 거리로 저장
+                        document.getElementById('maxDistance').innerText = distance;
+                    }
+
+                    // 최고점 갱신
+                    if (y < maxHeight.y) {
+                        maxHeight = { x: x, y: y };
+                    }
+
+                    // 궤적 저장
+                    trajectory.push({ x: x, y: y });
+
+                    // Update time
+                    time += interval / 300;
+                }
+
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                drawCannon(); // 대포 다시 그리기
+
+                // Draw the trajectory
+                ctx.beginPath();
+                ctx.strokeStyle = "blue";
+                for (let i = 0; i < trajectory.length; i++) {
+                    ctx.lineTo(trajectory[i].x, trajectory[i].y);
+                }
+                ctx.stroke();
+
+                // 최고점 표시
+                ctx.beginPath();
+                ctx.arc(maxHeight.x, maxHeight.y, 5, 0, 2 * Math.PI);
+                ctx.fillStyle = "green";
+                ctx.fill();
+                ctx.fillText("최고점", maxHeight.x + 10, maxHeight.y - 10);
+
+                // Draw the projectile
+                ctx.beginPath();
+                ctx.arc(x, y, 5, 0, 2 * Math.PI);
+                ctx.fillStyle = "red";
+                ctx.fill();
+            }
+
+            // 새로 애니메이션 시작
+            animation = setInterval(drawProjectile, interval);
         }
 
-        // 공 그리기
-        ctx.beginPath();
-        ctx.arc(x, y, size / 2, 0, 2 * Math.PI);
-        ctx.fillStyle = "red";
-        ctx.fill();
-
-        // 에너지 계산 및 표시
-        const kineticEnergy = 0.5 * mass * (initialVelocityX ** 2 + initialVelocityY ** 2);
-        const potentialEnergy = mass * g * (canvas.height - y);
-        const mechanicalEnergy = kineticEnergy + potentialEnergy;
-
-        document.getElementById("potentialEnergy").innerText = potentialEnergy.toFixed(2);
-        document.getElementById("kineticEnergy").innerText = kineticEnergy.toFixed(2);
-        document.getElementById("mechanicalEnergy").innerText = mechanicalEnergy.toFixed(2);
-    }, 50);
-}
-
-
-
+        drawCannon(); // 초기 대포 그리기
     </script>
 </body>
 </html>

@@ -1,227 +1,324 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JavaScript Lab</title>
-    <meta name="google-site-verification" content="8KcUKjvAz9EDMV1cHZVJ5rOiKQCN9KaMAfOaZr61JyA" />
+    <title>JSLAB</title>
     <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: auto;
+        }
         body {
-            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
+            background-color: #f7f7f7;
+            display: flex;
+        }
+        .sidebar {
+            width: 200px;
+            background-color: #f4f4f4;
+            color: #000000;
+            position: fixed;
+            top: 0;
+            left: -200px;
+            height: 100%;
+            padding-top: 50px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            font-family: 'Arial', sans-serif;
-            position: relative;
+            z-index: 100000;
+            transition: left 0.3s ease;
         }
-
-        .login-register {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            font-size: 18px;
-            color: #333;
-            margin: 0;
-            -webkit-user-select:none;
-  -moz-user-select:none;
-  -ms-user-select:none;
-  user-select:none;
-        }
-
-        header {
+        .sidebar-item {
+            padding: 15px 10px;
             text-align: center;
-            margin: 30px 0;
-        }
-
-        header h1 {
-            font-size: 48px;
-            color: #333;
-            margin: 0;
-        }
-
-        .content-wrapper {
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            width: 100%;
-            max-width: 1200px;
-            margin: 0 auto;
-            position: relative;
-        }
-
-        .go-box-container {
-            display: flex;
-            gap: 30px;
-            flex-wrap: wrap-reverse;
-            justify-content: center;
-            max-width: 800px;
-        }
-
-        .go-box {
-            width: 150px;
-            height: 150px;
-            border-radius: 10px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: #333;
-            font-size: 18px;
-            font-weight: bold;
-            background-color: #fff;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             cursor: pointer;
-            transition: transform 0.3s ease-in-out, background-color 0.3s ease-in-out;
-            position: relative;
-            overflow: hidden;
+            width: 100%;
+            font-weight: bold;
+            transition: background-color 0.3s;
         }
-
-        .go-box:hover {
-            transform: scale(1.05);
+        .sidebar-item:hover {
+            background-color: #dedede;
         }
-
-        .go-box::before {
-            content: '';
-            position: absolute;
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+        .overlay {
+            position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-size: cover;
-            background-position: center;
+            background-color: #f7f7f7;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: height 0.5s ease-in-out;
+            border: 2px solid #f3f3f3;
+            border-radius: 8px;
+        }
+        .jslab-title {
+            font-size: 4em;
+            font-weight: bold;
             opacity: 0;
-            transition: opacity 0.3s ease-in-out;
-            z-index: 0;
+            animation: revealText 0.5s forwards;
+            cursor: pointer;
         }
-
-        .go-box.fire::before {
-            background-image: url('../image/불꽃실험.png');
+        .menu-icon, .login-icon {
+            position: absolute;
+            top: 10px;
+            font-size: 2em;
+            cursor: pointer;
+            opacity: 0;
+            animation: fadeIn 1s forwards 1s;
         }
-
-        .go-box.circuit::before {
-            background-image: url('../image/전기회로.png');
+        .menu-icon {
+            left: 20px;
+            font-size: 3em;
         }
-
-        .go-box.solar::before {
-            background-image: url('../image/태양계.png');
+        .login-icon {
+            right: 20px;
+            top: 20px;
         }
-
-        .go-box.plants::before {
-            background-image: url('../image/식물과에너지.png');
-        }
-
-        .go-box.solubility::before {
-            background-image: url('../image/용해도.png');
-        }
-
-        .go-box.giche::before {
-            background-image: url('../image/포물선운동.png');
-        }
-
-        .go-box:hover::before {
-            opacity: 0.6;
-        }
-
-        .go-box span {
-            position: relative;
-            z-index: 1;
-        }
-
-        .ad-sidebar {
-        width: 160px;
-        position: absolute;
-        top: 50px;
-        right: 0px;
-    }
-
-        .ad-top {
+        .header {
             width: 100%;
+            background-color: #fffdfd;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
             display: flex;
             justify-content: center;
-            margin: 20px 0;
+            align-items: center;
+            transition: opacity 0.5s ease-in-out;
         }
-
-        .ad-mobile {
-            position: absolute;
-            left: 0;
-            bottom: 0;
-            z-index: 1000;
+        .container {
+            display: grid;
+            width: 90%;
+            padding: 20px;
+            background-color: #f7f7f7;
+            margin-top: 150px;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            justify-content: center;       
         }
+        .card {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    position: relative;
+    background-color: rgb(247, 247, 247);
+    height: 150px;
+    transition: box-shadow 0.3s, opacity 0.5s;
+    opacity: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
 
-        .ad-bottom {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            z-index: 1000;
+.card.visible {
+    opacity: 1;
+}
+
+.card img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    transition: opacity 0.2s ease-in-out; /* 이미지 페이드 인 효과 */
+}
+
+.card:hover img {
+    opacity: 1;
+}
+
+.card:hover {
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    background-color: rgb(248, 246, 246);
+}
+
+
+        .card-title {
+            font-size: 1.2em;
+            font-weight: bold;
         }
-
+        @keyframes revealText {
+            0% {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        @keyframes shrinkOverlay {
+            0% {
+                height: 100%;
+            }
+            100% {
+                height: 10%;
+                font-size: 10px;
+            }
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
     </style>
 </head>
-
 <body>
-    {% if islogin == False %}
-    <div class="login-register" onclick="window.location.href='/login'">login / register</div>
-    {% else %}
-    <div class="login-register logout" onclick="window.location.href='/logout'">logout</div>
-    {% endif %}
-    <div class="ad-top">
-        <ins class="kakao_ad_area" style="display:none;"
-            data-ad-unit="DAN-xXdUGbzEFy0bHdIC"
-            data-ad-width="728"
-            data-ad-height="90"></ins>
+    <div class="sidebar">
+        <div class="sidebar-item" data-target="불꽃실험">불꽃실험</div>
+        <div class="sidebar-item" data-target="전기회로">전기회로</div>
+        <div class="sidebar-item" data-target="태양계">태양계</div>
+        <div class="sidebar-item" data-target="식물과에너지">식물과에너지</div>
+        <div class="sidebar-item" data-target="용해도">용해도</div>
+        <div class="sidebar-item"  data-target="포물선운동">포물선운동</div>
+        <div class="sidebar-item" data-target="발전기">발전기</div>
+        <div class="sidebar-item" data-target="몰라">몰라</div>
     </div>
-
-    <header>
-        <h1>자바스크립트 실험실</h1>
-    </header>
-
-    <div class="content-wrapper">
-        <div class="go-box-container">
-            <div class="go-box fire" onclick="window.location='/실험/불꽃실험'">
-                <span>불꽃실험</span>
-            </div>
-            <div class="go-box circuit" onclick="window.location='/실험/전기회로'">
-                <span>전기회로</span>
-            </div>
-            <div class="go-box solar" onclick="window.location='/실험/태양계'">
-                <span>태양계</span>
-            </div>
-            <div class="go-box plants" onclick="window.location='/실험/식물과에너지'">
-                <span>식물과에너지</span>
-            </div>
-            <div class="go-box solubility" onclick="window.location='/실험/용해도'">
-                <span>용해도</span>
-            </div>
-            <div class="go-box giche" onclick="window.location='/실험/포물선운동'">
-                <span>포물선운동</span>
+    
+    <div class="main-content">
+        <div class="header">
+            <div class="overlay">
+                <div class="jslab-title" onclick="window.location.href='/index'">JSLAB</div>
+                <div class="menu-icon" aria-label="Menu">☰</div>
+                <div class="login-icon" aria-label="Login"  onclick="window.location.href='/login'">login</div>
             </div>
         </div>
+        <div class="container">
+            <div class="card fire" id="불꽃실험" onclick="window.location.href='/실험/불꽃실험'">
+                <img src="../image/불꽃실험.png" alt="불꽃실험">
+                <div class="card-title">불꽃실험</div>
+            </div>
+            <div class="card circuit" id="전기회로" onclick="window.location.href='/실험/전기회로'">
+                <img src="../image/전기회로.png" alt="전기회로">
+                <div class="card-title">전기회로</div>
+            </div>
+            <div class="card solar" id="태양계" onclick="window.location.href='/실험/태양계'">
+                <img src="../image/태양계.png" alt="전기회로">
+                <div class="card-title">태양계</div>
+            </div>
+            <div class="card plants" id="식물과에너지" onclick="window.location.href='/실험/식물과에너지'">
+                <img src="../image/식물과에너지.png" alt="식물과에너지">
+                <div class="card-title">식물과에너지</div>
+            </div>
+            <div class="card solubility" id="용해도" onclick="window.location.href='/실험/용해도'">
+                <img src="../image/용해도.png" alt="용해도">
+                <div class="card-title">용해도</div>
+            </div>
+            <div class="card giche" id="포물선운동" onclick="window.location.href='/실험/포물선운동'">
+                <img src="../image/포물선운동.png" alt="포물선운동">
+                <div class="card-title">포물선운동</div>
+            </div>
+            <div class="card baljungi" id="발전기" onclick="window.location.href='/실험/발전기'">
+                <img src="../image/발전기.png" alt="발전기">
+                <div class="card-title">발전기</div>
+            </div>
+            <div class="card" id="몰라" onclick="window.location.href='/실험/자유낙하실험'">
+                <img src="../image/자유낙하실험.png" alt="자유낙하실험">
+                <div class="card-title">자유낙하실험</div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Trigger shrinking effect and reveal content after animation ends
+        document.querySelector('.jslab-title').addEventListener('animationend', () => {
+            document.querySelector('.overlay').style.animation = 'shrinkOverlay 0.5s forwards';
+        });
 
-        
-    </div>
-    <div class="ad-sidebar">
-        <ins class="kakao_ad_area" style="display:none;"
-            data-ad-unit="DAN-4BcFq4mOzvUCmGND"
-            data-ad-width="160"
-            data-ad-height="600"></ins>
-    </div>
-    <div class="ad-mobile">
-        <ins class="kakao_ad_area" style="display:none;"
-            data-ad-unit="DAN-9EAI9qmVJ0mvIZgY"
-            data-ad-width="320"
-            data-ad-height="100"></ins>
-    </div>
+        document.addEventListener('DOMContentLoaded', () => {
+            let lastScrollTop = 0;
+            let sidebarFixed = false; // Flag to indicate if sidebar is fixed
+            
+            // 카드 요소를 선택
+            const cards = document.querySelectorAll('.card');
 
-    <div class="ad-bottom">
-        <ins class="kakao_ad_area" style="display:none;"
-            data-ad-unit="DAN-oOBhpFJ9RyLpbudK"
-            data-ad-width="300"
-            data-ad-height="250"></ins>
-    </div>
+            // Intersection Observer 설정
+            const options = {
+                root: null, // viewport
+                threshold: 0.2 // 20%가 보일 때 콜백 호출
+            };
 
-    <script type="text/javascript" src="//t1.daumcdn.net/kas/static/ba.min.js" async></script>
+            const observerCallback = (entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        // 카드가 보일 때 visible 클래스 추가
+                        entry.target.classList.add('visible');
+                        observer.unobserve(entry.target); // 더 이상 관찰하지 않음
+                    }
+                });
+            };
+
+            const observer = new IntersectionObserver(observerCallback, options);
+
+            // 각 카드에 대해 Observer 등록
+            cards.forEach(card => {
+                observer.observe(card);
+            });
+
+            // 사이드바 클릭 시 해당 카드로 스크롤
+            const sidebarItems = document.querySelectorAll('.sidebar-item');
+            sidebarItems.forEach(item => {
+                item.addEventListener('click', () => {
+                    const targetId = item.getAttribute('data-target');
+                    window.location.href='/실험/'+targetId;
+                });
+            });
+
+            // Menu-icon hover 시 사이드바 보여줌
+            const menuIcon = document.querySelector('.menu-icon');
+            const sidebar = document.querySelector('.sidebar');
+            
+            menuIcon.addEventListener('mouseover', () => {
+                if (!sidebarFixed) { // Sidebar가 고정되지 않은 경우에만 작동
+                    sidebar.style.left = '0px'; // Show sidebar on hover
+                }
+            });
+
+            sidebar.addEventListener('mouseleave', () => {
+                if (!sidebarFixed) { // Sidebar가 고정되지 않은 경우에만 작동
+                    sidebar.style.left = '-200px'; // Hide sidebar when mouse leaves
+                }
+            });
+
+            // Menu-icon 클릭 시 사이드바 고정/해제
+            menuIcon.addEventListener('click', () => {
+                sidebarFixed = !sidebarFixed; // Toggle fixed state
+                if (sidebarFixed) {
+                    sidebar.style.left = '0px'; // Show sidebar
+                } else {
+                    sidebar.style.left = '-200px'; // Hide sidebar
+                }
+            });
+
+            // 스크롤 이벤트 처리
+            window.addEventListener('scroll', function() {
+                let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                if (scrollTop > lastScrollTop && scrollTop > 100) {
+                    document.querySelector('.overlay').style.opacity = '0';
+                } else {
+                    document.querySelector('.overlay').style.opacity = '1';
+                }
+                lastScrollTop = scrollTop <= 0 ? 0 : scrollTop; // 모바일이나 음수 스크롤 방지
+            });
+        });
+    </script>
 </body>
-
 </html>

@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>이상적인 자유낙하 실험 - 에너지 표시</title>
+    <style>
+        canvas {
+            border: 1px solid black;
+        }
+        button {
+            margin-top: 10px;
+        }
+        #energyInfo {
+            margin-top: 10px;
+            font-family: Arial, sans-serif;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas" width="400" height="600"></canvas>
+    <br>
+    <button id="startBtn">시작</button>
+    <button id="resetBtn">리셋</button>
+    <div id="energyInfo"></div>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const startBtn = document.getElementById('startBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const energyInfo = document.getElementById('energyInfo');
+
+        let ball = {
+            x: canvas.width / 2,
+            y: 50,
+            radius: 20,
+            color: 'red',
+            velocity: 0,
+            mass: 1 // kg
+        };
+
+        const gravity = 9.8;
+        let startTime;
+        let animationId;
+        let isRunning = false;
+
+        function drawBall() {
+            ctx.beginPath();
+            ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
+            ctx.fillStyle = ball.color;
+            ctx.fill();
+            ctx.closePath();
+        }
+
+        function clearCanvas() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+
+        function calculateEnergies() {
+            const height = canvas.height - ball.y - ball.radius;
+            const potentialEnergy = ball.mass * gravity * height / 1000; // J
+            const kineticEnergy = 0.5 * ball.mass * ball.velocity * ball.velocity / 1000; // J
+            const totalEnergy = potentialEnergy + kineticEnergy;
+
+            return {
+                potential: potentialEnergy.toFixed(2),
+                kinetic: kineticEnergy.toFixed(2),
+                total: totalEnergy.toFixed(2)
+            };
+        }
+
+        function displayEnergies(energies) {
+            energyInfo.innerHTML = `
+                위치 에너지: ${energies.potential} J<br>
+                운동 에너지: ${energies.kinetic} J<br>
+                역학적 에너지: ${energies.total} J
+            `;
+        }
+
+        function update(elapsedTime) {
+            // 이상적인 자유낙하 방정식 사용
+            const displacement = 0.5 * gravity * elapsedTime * elapsedTime;
+            ball.y = 50 + displacement;
+            ball.velocity = gravity * elapsedTime;
+
+            if (ball.y + ball.radius > canvas.height) {
+                ball.y = canvas.height - ball.radius;
+                isRunning = false;
+            }
+
+            const energies = calculateEnergies();
+            displayEnergies(energies);
+        }
+
+        function animate(currentTime) {
+            if (!isRunning) return;
+
+            if (startTime === undefined) {
+                startTime = currentTime;
+            }
+
+            const elapsedTime = (currentTime - startTime) / 1000; // 초 단위로 변환
+
+            clearCanvas();
+            update(elapsedTime);
+            drawBall();
+
+            animationId = requestAnimationFrame(animate);
+        }
+
+        function start() {
+            if (!isRunning) {
+                isRunning = true;
+                startTime = undefined;
+                requestAnimationFrame(animate);
+            }
+        }
+
+        function reset() {
+            isRunning = false;
+            cancelAnimationFrame(animationId);
+            ball.y = 50;
+            ball.velocity = 0;
+            clearCanvas();
+            drawBall();
+            const energies = calculateEnergies();
+            displayEnergies(energies);
+        }
+
+        startBtn.addEventListener('click', start);
+        resetBtn.addEventListener('click', reset);
+
+        drawBall();
+        const initialEnergies = calculateEnergies();
+        displayEnergies(initialEnergies);
+    </script>
+</body>
+</html>

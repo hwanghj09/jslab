@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>발전기 시뮬레이션</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #e0f7fa;
+            margin: 0;
+        }
+
+        canvas {
+            border: 2px solid #00796b;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        #controls {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        #rotateButton {
+            background-color: #00796b;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        #rotateButton:hover {
+            background-color: #004d40;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <canvas id="generatorCanvas" width="400" height="300"></canvas>
+        <div id="controls">
+            <button id="rotateButton">손잡이 돌리기</button>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('generatorCanvas');
+        const ctx = canvas.getContext('2d');
+        const rotateButton = document.getElementById('rotateButton');
+
+        let rotation = 0;
+        let brightness = 0;
+
+        function drawGenerator() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // 자석
+            ctx.fillStyle = '#607d8b';
+            ctx.fillRect(50, 100, 100, 100);
+            ctx.strokeStyle = '#37474f';
+            ctx.lineWidth = 3;
+            ctx.strokeRect(50, 100, 100, 100);
+            ctx.fillStyle = 'white';
+            ctx.font = '20px Arial';
+            ctx.fillText('N', 75, 140);
+            ctx.fillText('S', 75, 190);
+
+            // 코일
+            ctx.save();
+            ctx.translate(200, 150);
+            ctx.rotate(rotation);
+            ctx.beginPath();
+            ctx.arc(0, 0, 50, 0, Math.PI * 2);
+            ctx.strokeStyle = 'orange';
+            ctx.lineWidth = 7;
+            ctx.shadowColor = 'rgba(255, 165, 0, 0.5)';
+            ctx.shadowBlur = 10;
+            ctx.stroke();
+            ctx.restore();
+
+            // 손잡이
+            ctx.save();
+            ctx.translate(200, 150);
+            ctx.rotate(rotation);
+            ctx.beginPath();
+            ctx.moveTo(0, 0);
+            ctx.lineTo(70, 0);
+            ctx.strokeStyle = '#37474f';
+            ctx.lineWidth = 5;
+            ctx.stroke();
+            ctx.restore();
+
+            // 전선 (코일에서 전구까지)
+            ctx.beginPath();
+            ctx.moveTo(100, 200);
+            ctx.lineTo(100, 250);
+            ctx.lineTo(275, 250);
+            ctx.lineTo(350, 250); 
+            ctx.lineTo(350, 200);
+            ctx.strokeStyle = '#000';
+            ctx.lineWidth = 4;
+            ctx.stroke();
+
+            // 전구
+            ctx.beginPath();
+            ctx.arc(350, 150, 30, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(255, 255, 0, ${brightness})`;
+            ctx.fill();
+            ctx.strokeStyle = 'black';
+            ctx.lineWidth = 2;
+            ctx.shadowColor = `rgba(255, 255, 0, ${brightness})`;
+            ctx.shadowBlur = brightness * 20;
+            ctx.stroke();
+
+            // 전구 바디
+            ctx.beginPath();
+            ctx.moveTo(335, 180);
+            ctx.lineTo(365, 180);
+            ctx.lineTo(365, 210);
+            ctx.lineTo(335, 210);
+            ctx.closePath();
+            ctx.fillStyle = '#cccccc';
+            ctx.fill();
+            ctx.strokeStyle = 'black';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+        }
+
+        function rotateHandle() {
+            rotation += Math.PI / 6;
+            brightness = Math.min(1, brightness + 0.2);
+            drawGenerator();
+
+            if (rotation < Math.PI * 2) {
+                requestAnimationFrame(rotateHandle);
+            } else {
+                rotation = 0;
+                setTimeout(() => {
+                    brightness = 0;
+                    drawGenerator();
+                }, 1000);
+            }
+        }
+
+        rotateButton.addEventListener('click', rotateHandle);
+
+        drawGenerator();
+    </script>
+</body>
+</html>
