@@ -205,8 +205,11 @@
             <div class="overlay">
                 <div class="jslab-title" onclick="window.location.href='/index'">JSLAB</div>
                 <div class="menu-icon" aria-label="Menu">☰</div>
-                <div class="login-icon" aria-label="Login"  onclick="window.location.href='/login'">login</div>
-                
+                {% if islogin == False %}
+                <div class="login-icon" onclick="window.location.href='/login'">login / register</div>
+                {% else %}
+                <div class="login-icon logout" onclick="window.location.href='/logout'">logout</div>
+                {% endif %}
             </div>
         </div>
         <div class="container">
