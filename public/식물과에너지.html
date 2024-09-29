@@ -12,6 +12,7 @@
             margin: 0;
             padding: 0;
             overflow-x: hidden;
+            background-color: #f7f7f7;
         }
 
         .ground {
@@ -378,13 +379,24 @@
             background-color: #dedede;
             
         }
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: f7f7f7;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            border: 2px solid #f3f3f3;
+            border-radius: 8px;
+        }
 
     </style>
 </head>
 <body>
     <div class="sidebar">
-
-    
         <div class="sidebar-item" data-target="불꽃실험">불꽃실험</div>
         <div class="sidebar-item" data-target="전기회로">전기회로</div>
         <div class="sidebar-item" data-target="태양계">태양계</div>

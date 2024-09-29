@@ -225,22 +225,10 @@
             cursor: pointer;
             opacity: 1;
         }
-        
-        .login-icon {
-            position: absolute;
-            right: 20px;
-            top: 30px;
-            color: rgb(159, 159, 159);
-            cursor: pointer;
-        }
-
-        .login-icon:hover {
-            color: black;
-        }
 
         .header {
             width: 100%;
-            background-color: #fffdfd;
+            background-color: #f7f7f7;
             position: fixed;
             top: 0;
             left: 0;
@@ -318,7 +306,7 @@
             <div class="jslab-title" onclick="window.location.href='/index'">JSLAB</div>
             <div class="menu-icon" aria-label="Menu">☰</div>
             {% if islogin == False %}
-                <div class="login-icon" onclick="window.location.href='/login'">login / sign up</div>
+                <div class="eotrmf" onclick="window.location.href='/login'">login</div>
             {% else %}
                 <div class="eotrmf">💬</div>
             {% endif %}

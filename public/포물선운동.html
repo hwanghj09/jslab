@@ -10,6 +10,7 @@
             margin: 0;
             padding: 0;
             text-align: center;
+            background-color: #f7f7f7;
         }
         .simulation-container {
             margin: 20px;
@@ -203,6 +204,19 @@
 .comment-submit:hover {
     background-color: #45a049;
 }
+.overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: #f7f7f7;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            border: 2px solid #f3f3f3;
+            border-radius: 8px;
+        }
     </style>
 </head>
 <body>
@@ -247,7 +261,7 @@
     <textarea class="comment-input" id="commentInput" placeholder="댓글을 입력하세요..."></textarea>
     <button class="comment-submit" onclick="addcomment()">댓글 추가</button>
     {% endif %}
-</div>
+</div><br><br>
     <div class="simulation-container">
         <h1>포물선운동</h1>
         <canvas id="simulationCanvas" width="800" height="400"></canvas>

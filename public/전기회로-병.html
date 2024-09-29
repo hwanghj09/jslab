@@ -9,7 +9,7 @@
         :root {
             --primary-color: #000000;
             --secondary-color: #000000;
-            --background-color: #ecf0f1;
+            --background-color: #f7f7f7;
             --text-color: #2c3e50;
         }
 
@@ -332,10 +332,22 @@
         .login-icon:hover {
             color: black;
         }
-
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: #f7f7f7;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            border: 2px solid #f3f3f3;
+            border-radius: 8px;
+        }
         .header {
             width: 100%;
-            background-color: #fffdfd;
+            background-color: #f7f7f7;
             position: fixed;
             top: 0;
             left: 0;
@@ -394,6 +406,7 @@
     </style>
 </head>
 <body>
+    
     <div class="sidebar">
 
     
@@ -433,6 +446,7 @@
         <button class="comment-submit" onclick="addcomment()">댓글 추가</button>
         {% endif %}
     </div>
+    <br>
     <div class="container">
         <h1>병렬 연결된 전구 회로</h1>
         
