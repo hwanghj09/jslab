@@ -9,7 +9,7 @@
         :root {
             --primary-color: #000000;
             --secondary-color: #000000;
-            --background-color: #ecf0f1;
+            --background-color: #f7f7f7;
             --text-color: #2c3e50;
         }
 
@@ -194,9 +194,8 @@
             padding: 10px;
             color: #000000;
             font-size: 20px;
-            font-weight: 20;
+            font-weight: 700;
             text-align: center;
-
         }
 
         .comment-body {
@@ -261,11 +260,119 @@
             cursor: pointer;
             transition: background-color 0.2s;
         }
+        .jslab-title {
+            font-size: 40px;
+            font-weight: bold;
+            cursor: pointer;
+            opacity: 1;
+        }
+        
+        .menu-icon {
+            position: absolute;
+            left: 20px;
+            top: 10px;
+            font-size: 1.2em;
+            cursor: pointer;
+            opacity: 1;
+        }
+        
+        .login-icon {
+            position: absolute;
+            right: 20px;
+            top: 30px;
+            color: rgb(159, 159, 159);
+            cursor: pointer;
+        }
 
+        .login-icon:hover {
+            color: black;
+        }
+
+        .header {
+            width: 100%;
+            background-color: #fffdfd;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .tutorial {
+            z-index: 1000000;
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-color: black;
+            opacity: 0.6;
+        }
+        
+        .speech-balloon {
+            background-color: white;
+            width: 500px;
+            height: 100px;
+            z-index: 50000000;
+            border-radius: 10% 10% 10% 10%;
+            text-align: center;
+            margin: 0 auto;
+        }
+
+        .sidebar {
+            width: 200px;
+            background-color: #f4f4f4;
+            color: #000000;
+            position: fixed;
+            top: 0;
+            left: -200px;
+            height: 100%;
+            padding-top: 50px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 100000;
+            transition: left 0.3s ease;
+        }
+        .sidebar-item {
+            padding: 15px 10px;
+            text-align: center;
+            cursor: pointer;
+            width: 100%;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+        .sidebar-item:hover {
+            background-color: #dedede;
+            
+        }
     </style>
 </head>
 <body>
-    <div class="eotrmf">💬</div>
+    <div class="sidebar">
+
+    
+        <div class="sidebar-item" data-target="불꽃실험">불꽃실험</div>
+        <div class="sidebar-item" data-target="전기회로">전기회로</div>
+        <div class="sidebar-item" data-target="태양계">태양계</div>
+        <div class="sidebar-item" data-target="식물과에너지">식물과에너지</div>
+        <div class="sidebar-item" data-target="용해도">용해도</div>
+        <div class="sidebar-item"  data-target="포물선운동">포물선운동</div>
+        <div class="sidebar-item" data-target="발전기">발전기</div>
+        <div class="sidebar-item" data-target="자유낙하실험">자유낙하실험</div>
+    </div>
+    <div class="header">
+        <div class="overlay">
+            <div class="jslab-title" onclick="window.location.href='/index'">JSLAB</div>
+            <div class="menu-icon" aria-label="Menu">☰</div>
+            {% if islogin == False %}
+                <div class="login-icon" onclick="window.location.href='/login'">login / sign up</div>
+            {% else %}
+                <div class="eotrmf">💬</div>
+            {% endif %}
+            
+        </div>
+    </div>
 <div class="comment-section" id="commentSection">
         <div class="comment-header">댓글</div>
         <hr>
@@ -281,7 +388,6 @@
         <button class="comment-submit" onclick="addcomment()">댓글 추가</button>
         {% endif %}
     </div>
-
     <div class="container">
         <h1>직렬 연결된 전구 회로</h1>
         
@@ -310,7 +416,6 @@
             <button onclick="goToParallelCircuit()">병렬 회로 보기</button>
         </div>
     </div>
-
     <script>
         document.querySelector('.eotrmf').addEventListener('click', () => {
             commentSection.classList.toggle('open');
@@ -393,6 +498,45 @@ function goToIndex() {
         function goToParallelCircuit() {
             window.location.href = '/실험/전기회로-병';
         }
+
+
+        document.addEventListener('DOMContentLoaded', () => {
+            let sidebarFixed = false; // Flag to indicate if sidebar is fixed
+            // 사이드바 클릭 시 해당 카드로 스크롤
+            const sidebarItems = document.querySelectorAll('.sidebar-item');
+            sidebarItems.forEach(item => {
+                item.addEventListener('click', () => {
+                    const targetId = item.getAttribute('data-target');
+                    window.location.href='/실험/'+targetId;
+                });
+            });
+
+            // Menu-icon hover 시 사이드바 보여줌
+            const menuIcon = document.querySelector('.menu-icon');
+            const sidebar = document.querySelector('.sidebar');
+            
+            menuIcon.addEventListener('mouseover', () => {
+                if (!sidebarFixed) { // Sidebar가 고정되지 않은 경우에만 작동
+                    sidebar.style.left = '0px'; // Show sidebar on hover
+                }
+            });
+
+            sidebar.addEventListener('mouseleave', () => {
+                if (!sidebarFixed) { // Sidebar가 고정되지 않은 경우에만 작동
+                    sidebar.style.left = '-200px'; // Hide sidebar when mouse leaves
+                }
+            });
+
+            // Menu-icon 클릭 시 사이드바 고정/해제
+            menuIcon.addEventListener('click', () => {
+                sidebarFixed = !sidebarFixed; // Toggle fixed state
+                if (sidebarFixed) {
+                    sidebar.style.left = '0px'; // Show sidebar
+                } else {
+                    sidebar.style.left = '-200px'; // Hide sidebar
+                }
+            });
+        });
     </script>
 </body>
 </html>

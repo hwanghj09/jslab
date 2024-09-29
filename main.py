@@ -156,6 +156,12 @@ async def experiment(request: Request, name: str, db: Session = Depends(get_db))
         id=6
     elif name=="전기회로":
         id=7    
+    elif name=="포물선운동":
+        id=8
+    elif name=="발전기":
+        id=9
+    elif name=="자유낙하실험":
+        id=10   
     if token:
         islogin = True
         try:
@@ -175,7 +181,7 @@ async def experiment(request: Request, name: str, db: Session = Depends(get_db))
             "request": request,
             "email": token_data["email"],
             "islogin": islogin,
-            "comments": comment_data  # 댓글 데이터를 템플릿에 전달
+            "comments": comment_data
         }
     )
 @app.get("/login")

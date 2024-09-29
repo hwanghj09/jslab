@@ -211,40 +211,210 @@
             background-color: #45a049;
         }
 
-        .eotrmf {
-            position: fixed;
-            top: 0px;
-            right: 30px;
-            font-size: 24px;
-            color: #000000;
-            width: 50px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: background-color 0.2s;
-        }
+        /* Header Styles */
+.header {
+    width: 100%;
+    background-color: #fffdfd;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.jslab-title {
+    font-size: 40px;
+    font-weight: bold;
+    cursor: pointer;
+    opacity: 1;
+}
+
+.menu-icon {
+    position: absolute;
+    left: 20px;
+    top: 10px;
+    font-size: 1.2em;
+    cursor: pointer;
+    opacity: 1;
+}
+
+.login-icon {
+    position: absolute;
+    right: 20px;
+    top: 30px;
+    color: rgb(159, 159, 159);
+    cursor: pointer;
+}
+
+.login-icon:hover {
+    color: black;
+}
+
+/* Sidebar Styles */
+.sidebar {
+    width: 200px;
+    background-color: #f4f4f4;
+    color: #000000;
+    position: fixed;
+    top: 0;
+    left: -200px;
+    height: 100%;
+    padding-top: 50px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    z-index: 100000;
+    transition: left 0.3s ease;
+}
+
+.sidebar-item {
+    padding: 15px 10px;
+    text-align: center;
+    cursor: pointer;
+    width: 100%;
+    font-weight: bold;
+    transition: background-color 0.3s;
+}
+
+.sidebar-item:hover {
+    background-color: #dedede;
+}
+
+/* Comment Section Styles */
+.eotrmf {
+    position: fixed;
+    top: 0px;
+    right: 30px;
+    font-size: 24px;
+    color: #000000;
+    width: 50px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.comment-section {
+    position: fixed;
+    top: 0;
+    left: -400px;
+    width: 350px;
+    height: 100%;
+    background-color: #f8f8f8;
+    box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
+    transition: left 0.3s ease-in-out;
+    z-index: 10000;
+    display: flex;
+    flex-direction: column;
+    font-family: 'Roboto', sans-serif;
+}
+
+.comment-section.open {
+    left: 0;
+}
+
+.comment-header {
+    padding: 10px;
+    color: #000000;
+    font-size: 20px;
+    font-weight: 20;
+    text-align: center;
+}
+
+.comment-body {
+    padding: 10px;
+    flex-grow: 1;
+    overflow-y: auto;
+}
+
+.comment {
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 15px;
+}
+
+.comment p {
+    margin: 0 0 10px 0;
+    line-height: 1.4;
+}
+
+.comment-input {
+    width: calc(100% - 80px);
+    padding: 15px;
+    margin: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 16px;
+    resize: vertical;
+    min-height: 100px;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.comment-submit {
+    width: calc(100% - 50px);
+    padding: 15px;
+    margin: 0 20px 20px;
+    background-color: #4CAF50;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 18px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.comment-submit:hover {
+    background-color: #45a049;
+}
     </style>
 </head>
 
 <body>
+
+    <div class="header">
+        <div class="overlay">
+            <div class="jslab-title" onclick="window.location.href='/index'">JSLAB</div>
+            <div class="menu-icon" aria-label="Menu">☰</div>
+            {% if islogin == False %}
+                <div class="login-icon" onclick="window.location.href='/login'">login / sign up</div>
+            {% else %}
+                <div class="eotrmf">💬</div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="sidebar">
+        <div class="sidebar-item" data-target="불꽃실험">불꽃실험</div>
+        <div class="sidebar-item" data-target="전기회로">전기회로</div>
+        <div class="sidebar-item" data-target="태양계">태양계</div>
+        <div class="sidebar-item" data-target="식물과에너지">식물과에너지</div>
+        <div class="sidebar-item" data-target="용해도">용해도</div>
+        <div class="sidebar-item" data-target="포물선운동">포물선운동</div>
+        <div class="sidebar-item" data-target="발전기">발전기</div>
+        <div class="sidebar-item" data-target="자유낙하실험">자유낙하실험</div>
+    </div>
     <div class="eotrmf">💬</div>
 <div class="comment-section" id="commentSection">
-        <div class="comment-header">댓글</div>
-        <hr>
-        <div class="comment-body" id="commentBody">
-            {% for comment in comments %}
-            <div class="comment">
-                <p>{{ comment.content }}</p>
-            </div>
-            {% endfor %}
+    <div class="comment-header">댓글</div>
+    <hr>
+    <div class="comment-body" id="commentBody">
+        {% for comment in comments %}
+        <div class="comment">
+            <p>{{ comment.content }}</p>
         </div>
-        {% if islogin == True %}
-        <textarea class="comment-input" id="commentInput" placeholder="댓글을 입력하세요..."></textarea>
-        <button class="comment-submit" onclick="addcomment()">댓글 추가</button>
-        {% endif %}
+        {% endfor %}
     </div>
+    {% if islogin == True %}
+    <textarea class="comment-input" id="commentInput" placeholder="댓글을 입력하세요..."></textarea>
+    <button class="comment-submit" onclick="addcomment()">댓글 추가</button>
+    {% endif %}
+</div>    
     <div id="tutorial" class="tutorial">
         <div class="tutorial-content">
             <h2>사용 방법</h2>
@@ -286,51 +456,8 @@
             <div id="differenceDisplay">용해도 차이: 0</div>
         </div>
     </div>
-    
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-        document.querySelector('.eotrmf').addEventListener('click', () => {
-            commentSection.classList.toggle('open');
-        });
-function addcomment() {
-const commentSection = document.getElementById('commentSection');
-    const commentInput = document.getElementById('commentInput');
-    const commentBody = document.getElementById('commentBody');
-    const postId = 6; // 실제 포스트 ID로 교체해야 함
-
-    const newCommentText = commentInput.value.trim();
-    if (newCommentText === '') return; // 빈 댓글은 추가하지 않음
-
-    // 댓글을 추가하는 요청
-    fetch(`/comments/${postId}`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'X-Requested-With': 'XMLHttpRequest'
-        },
-        body: new URLSearchParams({
-            content: newCommentText
-        })
-    })
-    .then(response => {
-        if (response.ok) {
-            return response.json();
-        } else {
-            throw new Error('댓글 추가에 실패했습니다.');
-        }
-    })
-    .then(newComment => {
-        // 댓글 추가 성공 시 댓글을 DOM에 추가
-        const commentElement = document.createElement('div');
-        commentElement.textContent = newComment.content;
-        commentBody.appendChild(commentElement);
-        commentInput.value = ''; // 입력 필드 초기화
-    })
-    .catch(error => {
-        console.error('댓글 추가 중 오류 발생:', error);
-        alert('댓글 추가에 실패했습니다.');
-    });
-}
         var waterTemperature = 20; // 초기 물의 온도
         var inputValue = 0;
 
@@ -523,6 +650,84 @@ const commentSection = document.getElementById('commentSection');
         function goToMain() {
             window.location.href = '/index';
         }
+
+        document.addEventListener('DOMContentLoaded', () => {
+    let sidebarFixed = false;
+    const menuIcon = document.querySelector('.menu-icon');
+    const sidebar = document.querySelector('.sidebar');
+    const commentToggle = document.querySelector('.eotrmf');
+    const commentSection = document.getElementById('commentSection');
+
+    // Sidebar functionality
+    menuIcon.addEventListener('mouseover', () => {
+        if (!sidebarFixed) {
+            sidebar.style.left = '0px';
+        }
+    });
+
+    sidebar.addEventListener('mouseleave', () => {
+        if (!sidebarFixed) {
+            sidebar.style.left = '-200px';
+        }
+    });
+
+    menuIcon.addEventListener('click', () => {
+        sidebarFixed = !sidebarFixed;
+        sidebar.style.left = sidebarFixed ? '0px' : '-200px';
+    });
+
+    // Sidebar item click event
+    const sidebarItems = document.querySelectorAll('.sidebar-item');
+    sidebarItems.forEach(item => {
+        item.addEventListener('click', () => {
+            const targetId = item.getAttribute('data-target');
+            window.location.href = '/실험/' + targetId;
+        });
+    });
+
+    // Comment section toggle
+    commentToggle.addEventListener('click', () => {
+        commentSection.classList.toggle('open');
+    });
+});
+
+// Add comment function
+function addcomment() {
+    const commentInput = document.getElementById('commentInput');
+    const commentBody = document.getElementById('commentBody');
+    const postId = 6; // Replace with actual post ID
+
+    const newCommentText = commentInput.value.trim();
+    if (newCommentText === '') return;
+
+    fetch(`/comments/${postId}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-Requested-With': 'XMLHttpRequest'
+        },
+        body: new URLSearchParams({
+            content: newCommentText
+        })
+    })
+    .then(response => {
+        if (response.ok) {
+            return response.json();
+        } else {
+            throw new Error('댓글 추가에 실패했습니다.');
+        }
+    })
+    .then(newComment => {
+        const commentElement = document.createElement('div');
+        commentElement.textContent = newComment.content;
+        commentBody.appendChild(commentElement);
+        commentInput.value = '';
+    })
+    .catch(error => {
+        console.error('댓글 추가 중 오류 발생:', error);
+        alert('댓글 추가에 실패했습니다.');
+    });
+}
     </script>
 </body>
 
