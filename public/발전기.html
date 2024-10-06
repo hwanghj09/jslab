@@ -280,7 +280,6 @@
     <div>
         <canvas id="generatorCanvas" width="400" height="300"></canvas>
         <div id="controls">
-            <button id="rotateButton">손잡이 돌리기</button>
             <button class="button" onclick="window.location.href='/index'">돌아가기</button>
         </div>
         
@@ -289,15 +288,16 @@
     <script>
         const canvas = document.getElementById('generatorCanvas');
         const ctx = canvas.getContext('2d');
-        const rotateButton = document.getElementById('rotateButton');
 
         let rotation = 0;
         let brightness = 0;
+        let isDragging = false;
+        let lastMousePosition = { x: 0, y: 0 };
 
         function drawGenerator() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-            // 자석
+            // Draw magnet
             ctx.fillStyle = '#607d8b';
             ctx.fillRect(50, 100, 100, 100);
             ctx.strokeStyle = '#37474f';
@@ -308,7 +308,7 @@
             ctx.fillText('N', 75, 140);
             ctx.fillText('S', 75, 190);
 
-            // 코일
+            // Draw coil
             ctx.save();
             ctx.translate(200, 150);
             ctx.rotate(rotation);
@@ -321,7 +321,7 @@
             ctx.stroke();
             ctx.restore();
 
-            // 손잡이
+            // Draw handle
             ctx.save();
             ctx.translate(200, 150);
             ctx.rotate(rotation);
@@ -333,7 +333,7 @@
             ctx.stroke();
             ctx.restore();
 
-            // 전선 (코일에서 전구까지)
+            // Draw wires
             ctx.beginPath();
             ctx.moveTo(100, 200);
             ctx.lineTo(100, 250);
@@ -344,7 +344,7 @@
             ctx.lineWidth = 4;
             ctx.stroke();
 
-            // 전구
+            // Draw light bulb
             ctx.beginPath();
             ctx.arc(350, 150, 30, 0, Math.PI * 2);
             ctx.fillStyle = `rgba(255, 255, 0, ${brightness})`;
@@ -355,7 +355,7 @@
             ctx.shadowBlur = brightness * 20;
             ctx.stroke();
 
-            // 전구 바디
+            // Draw light bulb base
             ctx.beginPath();
             ctx.moveTo(335, 180);
             ctx.lineTo(365, 180);
@@ -369,23 +369,52 @@
             ctx.stroke();
         }
 
-        function rotateHandle() {
-            rotation += Math.PI / 6;
-            brightness = Math.min(1, brightness + 0.2);
+        function updateRotation(event) {
+            if (!isDragging) return;
+
+            const rect = canvas.getBoundingClientRect();
+            const centerX = rect.left + 200;
+            const centerY = rect.top + 150;
+
+            const currentMousePosition = {
+                x: event.clientX - centerX,
+                y: event.clientY - centerY
+            };
+
+            const angle = Math.atan2(currentMousePosition.y, currentMousePosition.x) -
+                          Math.atan2(lastMousePosition.y, lastMousePosition.x);
+
+            rotation += angle;
+            lastMousePosition = currentMousePosition;
+
+            brightness = Math.min(1, brightness + Math.abs(angle) * 0.5);
             drawGenerator();
 
-            if (rotation < Math.PI * 2) {
-                requestAnimationFrame(rotateHandle);
-            } else {
-                rotation = 0;
-                setTimeout(() => {
-                    brightness = 0;
-                    drawGenerator();
-                }, 1000);
-            }
+            // Gradually decrease brightness
+            setTimeout(() => {
+                brightness = Math.max(0, brightness - 0.05);
+                drawGenerator();
+            }, 50);
         }
 
-        rotateButton.addEventListener('click', rotateHandle);
+        canvas.addEventListener('mousedown', (event) => {
+            isDragging = true;
+            const rect = canvas.getBoundingClientRect();
+            lastMousePosition = {
+                x: event.clientX - (rect.left + 200),
+                y: event.clientY - (rect.top + 150)
+            };
+        });
+
+        canvas.addEventListener('mousemove', updateRotation);
+
+        canvas.addEventListener('mouseup', () => {
+            isDragging = false;
+        });
+
+        canvas.addEventListener('mouseleave', () => {
+            isDragging = false;
+        });
 
         drawGenerator();
 
