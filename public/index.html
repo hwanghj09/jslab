@@ -13,7 +13,7 @@
         }
         body {
             font-family: Arial, sans-serif;
-            background-color: #f7f7f7;
+            background-color: #E5E1DA;
             display: flex;
         }
         .sidebar {
@@ -55,14 +55,13 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: #f7f7f7;
+            background-color: #E5E1DA;
             display: flex;
             align-items: center;
             justify-content: center;
             z-index: 9999;
             transition: height 0.5s ease-in-out;
-            border: 2px solid #f3f3f3;
-            border-radius: 8px;
+            border: 1.5px solid #6d6b65;
         }
         .jslab-title {
             font-size: 4em;
@@ -107,22 +106,24 @@
             display: grid;
             width: 90%;
             padding: 20px;
-            background-color: #f7f7f7;
             margin-top: 150px;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 20px;
             justify-content: center;       
         }
         .card {
-    border: 1px solid #ddd;
+            border: 1.5px solid #6d6b65;
     border-radius: 8px;
     padding: 20px;
     position: relative;
-    background-color: rgb(247, 247, 247);
+    background-color: #eee9e2;
     height: 150px;
     transition: box-shadow 0.3s, opacity 0.5s;
+    transition: transform 0.3s;
     opacity: 0;
+    box-shadow: 0 5px 8px rgba(0,0,0,0.15);
     display: flex;
+    font-size: 1.25em;
     flex-direction: column;
     justify-content: center;
     align-items: center;
@@ -134,6 +135,7 @@
 
 .card img {
     position: absolute;
+    border-radius: 8px;
     top: 0;
     left: 0;
     width: 100%;
@@ -150,6 +152,7 @@
 .card:hover {
     box-shadow: 0 2px 8px rgba(0,0,0,0.15);
     background-color: rgb(248, 246, 246);
+    transform: translateY(-10px);
 }
 
 
