@@ -119,6 +119,32 @@ class UserCreateSchema(BaseModel):
 
 def get_password_hash(password: str) -> str:
     return pwd_context.hash(password)
+# Rank 모델 정의
+class RankModel(Base):
+    __tablename__ = "rank"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    player_name = Column(String, index=True)
+    score = Column(Integer)
+    game = Column(Integer)  # 게임 식별자
+    email = Column(String, index=True)  # 추가된 email 필드
+
+Base.metadata.create_all(bind=engine)
+class RankCreateSchema(BaseModel):
+    player_name: str
+    score: int
+    game: int
+    email: str  # 추가된 email 필드
+
+class RankResponseSchema(BaseModel):
+    id: int
+    player_name: str
+    score: int
+    game: int
+    email: str  # 추가된 email 필드
+
+    class Config:
+        orm_mode = True
 
 # 라우트 정의
 @app.get("/")
@@ -184,6 +210,72 @@ async def experiment(request: Request, name: str, db: Session = Depends(get_db))
             "comments": comment_data
         }
     )
+
+@app.get("/게임/{name}")
+async def experiment(request: Request, name: str, db: Session = Depends(get_db)):
+    token = request.cookies.get("access_token")
+    islogin = False
+    token_data = {"email": None}
+    user_name = None
+
+    # 상위 5개 랭킹 가져오기 (score가 큰 순서로)
+    ranks = db.query(RankModel).order_by(RankModel.score.desc()).limit(5).all()
+
+    if token:
+        islogin = True
+        try:
+            token_data = verify_token(token)
+            user = db.query(UserModel).filter(UserModel.email == token_data["email"]).first()
+            if user:
+                user_name = user.name
+        except HTTPException:
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid or expired token")
+    
+    return templates.TemplateResponse(
+        f"{name}.html", 
+        {
+            "request": request,
+            "email": token_data["email"],
+            "islogin": islogin,
+            "user_name": user_name,
+            "ranks": ranks  # 랭킹 데이터를 템플릿으로 전달
+        }
+    )
+
+@app.post("/saverank")
+def save_rank(rank: RankCreateSchema, request: Request):
+    db = SessionLocal()
+    token = request.cookies.get("access_token")
+    token_data = verify_token(token)
+    
+    try:
+        # 이메일로 기존 랭킹 조회
+        existing_rank = db.query(RankModel).filter_by(email=token_data["email"], game=rank.game).first()
+        
+        if existing_rank:
+            # 기존 점수가 더 높은 경우, 점수를 업데이트 하지 않음
+            if existing_rank.score >= rank.score:
+                return {"success": False, "message": "더 높은 점수가 필요합니다."}
+            else:
+                # 점수가 더 높으면 기존 랭킹을 업데이트
+                existing_rank.score = rank.score
+                db.commit()
+                db.refresh(existing_rank)
+                return {"success": True, "rank": existing_rank}
+        else:
+            # 새로운 랭킹 생성
+            new_rank = RankModel(player_name=rank.player_name, score=rank.score, game=rank.game, email=token_data["email"])
+            db.add(new_rank)
+            db.commit()
+            db.refresh(new_rank)
+            return {"success": True, "rank": new_rank}
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail="점수 저장에 실패했습니다.")
+    finally:
+        db.close()
+
+
 @app.get("/login")
 async def login(request: Request):
     return templates.TemplateResponse("login.html", {"request": request})
