@@ -18,14 +18,15 @@ import base64
 import io
 import matplotlib.pyplot as plt
 import asyncio
-
+import pymysql
+pymysql.install_as_MySQLdb()
 # 기본 설정
 Base = declarative_base()
 app = FastAPI()
 templates = Jinja2Templates(directory="public")
 
 # 데이터베이스 설정
-SQLALCHEMY_DATABASE_URL = "mysql://root:qwaszx77^^@svc.sel4.cloudtype.app:31994/sc"
+SQLALCHEMY_DATABASE_URL = "mysql+pymysql://root:qwaszx77^^@svc.sel4.cloudtype.app:31994/sc"
 engine = create_engine(SQLALCHEMY_DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base.metadata.create_all(bind=engine)

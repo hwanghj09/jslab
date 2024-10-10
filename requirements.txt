@@ -9,7 +9,7 @@ requests
 python-dotenv
 uvicorn
 pydantic
-pymysql  # mysqlclient 대신
+pymysql
 pydantic[email]
 python-multipart
 numpy
