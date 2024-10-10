@@ -14,3 +14,4 @@ pydantic[email]
 python-multipart
 numpy
 matplotlib
+psycopg2
