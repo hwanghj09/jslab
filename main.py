@@ -26,7 +26,7 @@ app = FastAPI()
 templates = Jinja2Templates(directory="public")
 
 # 데이터베이스 설정
-SQLALCHEMY_DATABASE_URL = "mysql+pymysql://root:qwaszx77^^@svc.sel4.cloudtype.app:31994/sc"
+SQLALCHEMY_DATABASE_URL = "postgresql://koyeb-adm:F8m2acTZhgAq@ep-quiet-pine-a15olun3.ap-southeast-1.pg.koyeb.app/koyebdb"
 engine = create_engine(SQLALCHEMY_DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base.metadata.create_all(bind=engine)
