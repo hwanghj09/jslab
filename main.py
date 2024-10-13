@@ -167,28 +167,32 @@ async def main(request: Request):
 async def experiment(request: Request, name: str, db: Session = Depends(get_db)):
     token = request.cookies.get("access_token")
     islogin = False
-    id=0
+    id = 0
     token_data = {"email": None}
+
+    # 실험 이름에 따라 id를 지정
     if name == "불꽃실험":
-        id=1
-    elif name=="전기회로-직":
-        id=2
-    elif name=="전기회로-병":
-        id=3
-    elif name=="태양계":
-        id=4
-    elif name=="식물과에너지":
-        id=5
-    elif name=="용해도":
-        id=6
-    elif name=="전기회로":
-        id=7    
-    elif name=="포물선운동":
-        id=8
-    elif name=="발전기":
-        id=9
-    elif name=="자유낙하실험":
-        id=10   
+        id = 1
+    elif name == "전기회로-직":
+        id = 2
+    elif name == "전기회로-병":
+        id = 3
+    elif name == "태양계":
+        id = 4
+    elif name == "식물과에너지":
+        id = 5
+    elif name == "용해도":
+        id = 6
+    elif name == "전기회로":
+        id = 7    
+    elif name == "포물선운동":
+        id = 8
+    elif name == "발전기":
+        id = 9
+    elif name == "자유낙하실험":
+        id = 10   
+    
+    # 토큰이 있으면 로그인 상태로 처리
     if token:
         islogin = True
         try:
@@ -199,8 +203,10 @@ async def experiment(request: Request, name: str, db: Session = Depends(get_db))
     # 댓글 조회
     comments = db.query(CommentModel).filter(CommentModel.post_id == id).all()
     
-    # 댓글을 JSON 형식으로 변환 (optional)
-    comment_data = [{"content": comment.content, "created_at": comment.created_at} for comment in comments]
+    # 댓글 데이터가 있으면 넘기고, 없으면 빈 리스트 넘김
+    comment_data = []
+    if comments:
+        comment_data = [{"content": comment.content, "created_at": comment.created_at} for comment in comments]
 
     return templates.TemplateResponse(
         f"{name}.html", 
@@ -211,6 +217,7 @@ async def experiment(request: Request, name: str, db: Session = Depends(get_db))
             "comments": comment_data
         }
     )
+
 
 @app.get("/게임/{name}")
 async def experiment(request: Request, name: str, db: Session = Depends(get_db)):

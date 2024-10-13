@@ -410,6 +410,7 @@
         <div class="sidebar-item" data-target="포물선운동">포물선운동</div>
         <div class="sidebar-item" data-target="발전기">발전기</div>
         <div class="sidebar-item" data-target="자유낙하실험">자유낙하실험</div>
+        <div class="sidebar-item" data-target="원소카드">원소카드</div>
     </div>
     <div class="eotrmf">💬</div>
 <div class="comment-section" id="commentSection">
@@ -456,6 +457,7 @@
             <br><label for="inputValue">용질의 양 (g):</label>
             <input id="inputValue" type="number" placeholder="숫자를 입력하세요" />
             <button onclick="addChemical()">용질 추가</button>
+            <div id="differenceDisplay">용해도 차이: 0</div>
             <div class="tem-container">
                 <div class="cup">
                     <div id="temperature-display">20°C</div>
@@ -465,7 +467,7 @@
         </div>
         <div>
             <canvas id="solubilityChart"></canvas>
-            <div id="differenceDisplay">용해도 차이: 0</div>
+            
         </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
