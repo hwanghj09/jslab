@@ -15,6 +15,7 @@
         }
         canvas {
             border: 1px solid black;
+            
             margin-bottom: 20px;
         }
         .controls {
@@ -221,6 +222,15 @@
             border: 2px solid #f3f3f3;
             border-radius: 8px;
         }
+        .explanation {
+            position: relative;
+            bottom: -5px;   
+            padding: 20px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 50%;
+        }
     </style>
 </head>
 <body><!-- Header -->
@@ -267,16 +277,27 @@
         {% endif %}
     </div>
     <br><br>
-    <canvas id="canvas" width="400" height="600"></canvas>
+    <left>
+    
+    </left>
+    <right>
+    <canvas id="canvas" width="400" height="600" right="30px"></canvas>
     <div class="controls">
         <label for="heightSlider">초기 높이: <span id="heightValue">550</span> m</label>
         <input type="range" id="heightSlider" min="20" max="550" value="550">
         <button id="startBtn" class="button">시작</button>
     </div>
+    </right>
+    <left>
     <div id="energyInfo"></div>
     <div id="landingInfo"></div>
     <button class="button" onclick="window.location.href='/index'">돌아가기</button>
-
+    </left>
+    <div class="explanation">
+        <h2>자유낙하운동 실험</h2>
+        <p>자유낙하 운동은 중력만의 영향을 받아 물체가 자유롭게 낙하하는 과정입니다. 이 실험을 통해 학생들은 물체의 높이에 따른 위치 에너지와 낙하 과정에서의 운동 에너지를 관찰할 수 있습니다. 또한, 자유낙하 운동에서 물체의 낙하 속도가 시간에 따라 어떻게 변하는지를 이해할 수 있으며, 중력의 영향을 받는 물체의 운동 법칙을 체험적으로 학습할 수 있습니다.</p>
+    </div>
+    
     <script>
         const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
