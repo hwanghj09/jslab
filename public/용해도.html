@@ -384,6 +384,17 @@
 .comment-submit:hover {
     background-color: #45a049;
 }
+.explanation {
+            position: absolute;
+            bottom: 15px;
+            left: 100px;
+            padding: 20px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 40%;
+            z-index: 10;
+        }
     </style>
 </head>
 
@@ -400,7 +411,7 @@
             {% endif %}
         </div>
     </div>
-
+    
     <div class="sidebar">
         <div class="sidebar-item" data-target="불꽃실험">불꽃실험</div>
         <div class="sidebar-item" data-target="전기회로">전기회로</div>
@@ -470,6 +481,12 @@
             
         </div>
     </div>
+    <div class="explanation">
+        <h2>용해도 실험</h2>
+        <p>용해도 실험은 다양한 물질이 물에 얼마나 잘 녹는지를 관찰하는 실험입니다. 학생들은 고체 물질(예: 소금, 설탕)의 용해도를 비교하면서 물질의 성질을 이해하고 과학적 방법론을 배울 수 있습니다.</p>
+    </div>
+    
+    
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         var waterTemperature = 20; // 초기 물의 온도
