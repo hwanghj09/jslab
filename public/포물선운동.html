@@ -219,14 +219,33 @@
             border-radius: 8px;
         }.explanation {
             position: relative;
-            bottom: 15px;
+            bottom: -450px;
             padding: 20px;
             background-color: white;
             border-radius: 10px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             width: 50%;
-            
+            align-items: center;
             z-index: 100000;
+        }
+        
+        .dksldlrjgkrltlfgdj{
+            padding: 20px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            
+            position: absolute;
+            left: 25px;
+            
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .zjsqjtmzmffotm{
+            position: absolute;
+            right: 25px;
+            
         }
     </style>
 </head>
@@ -274,13 +293,16 @@
     <button class="comment-submit" onclick="addcomment()">댓글 추가</button>
     {% endif %}
 </div><br><br>
+
     <div class="simulation-container">
         <h1>포물선운동</h1>
-        <canvas id="simulationCanvas" width="800" height="400"></canvas>
-        <div class="results">
-            <p>최대 높이: <span id="maxHeight">0</span> m</p>
-            <p>최대 거리: <span id="maxDistance">0</span> m</p>
-        </div>
+        <div class="zjsqjtmzmffotm">
+        <canvas id="simulationCanvas" width="800" height="400"></canvas></div>
+        <div class="dksldlrjgkrltlfgdj">
+            <div class="results">
+                <p>최대 높이: <span id="maxHeight">0</span> m</p>
+                <p>최대 거리: <span id="maxDistance">0</span> m</p>
+            </div>  
         <div class="controls">
             <label for="angle">각도 (degrees): </label>
             <input type="range" id="angle" class="slider" min="0" max="90" value="45">
@@ -302,11 +324,13 @@
         
         <button class="button" onclick="window.location.href='/index'">돌아가기</button>
     </div>
+    </div>
     <center>
-    <div class="explanation">
-        <h2>포물선 운동</h2>
-        <p>포물선 운동은 물체가 중력의 영향을 받아 수평으로 던져질 때 나타나는 경로입니다. 이 실험을 통해 학생들은 발사 각도와 초기 속도가 물체의 비행 거리와 높이에 미치는 영향을 관찰할 수 있습니다.</p>
-    </div></center>
+        <div class="explanation">
+            <h2>포물선 운동</h2>
+            <p>포물선 운동은 물체가 중력의 영향을 받아 발사된 후 곡선을 그리며 이동하는 경로입니다. 이 실험을 통해 학생들은 발사 각도와 초기 속도가 물체의 비행 거리와 높이에 미치는 영향을 관찰할 수 있습니다.</p>
+        </div>
+        </center>
     
     
     <script>
