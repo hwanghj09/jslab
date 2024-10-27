@@ -46,11 +46,35 @@
         .planet {
             background-size: cover;
         }
+        .sun:hover {
+    transform: translate(-50%, -50%) scale(1.3);
+}
+
+/* 행성의 기본 상태 */
+.planet {
+    width: var(--size);
+    height: var(--height);
+    transform-origin: calc(-1 * var(--orbit-radius)) center;
+    animation: orbit var(--orbit-period) linear infinite;
+    transition: width 0.3s ease, height 0.3s ease;
+}
+
+/* 행성 호버 효과 */
+.planet:hover {
+    width: calc(var(--size) * 1.5);
+    height: calc(var(--height) * 1.5);
+    z-index: 100;
+}
+
 
         @keyframes orbit {
-            from { transform: rotate(0deg) translateX(var(--orbit-radius)) rotate(0deg); }
-            to   { transform: rotate(360deg) translateX(var(--orbit-radius)) rotate(-360deg); }
-        }
+    from { 
+        transform: rotate(0deg) translateX(var(--orbit-radius)) rotate(0deg); 
+    }
+    to   { 
+        transform: rotate(360deg) translateX(var(--orbit-radius)) rotate(-360deg); 
+    }
+}
 
         .mercury { --size: 14px; --orbit-radius: 80px; --orbit-period: 88s; background-image: url('../image/수성.png'); z-index: 10; --height: 14px }
         .venus { --size: 18px; --orbit-radius: 110px; --orbit-period: 225s; background-image: url('../image/금성.png'); z-index: 10; --height: 18px }
@@ -60,17 +84,11 @@
         .saturn { --size: 44px; --orbit-radius: 400px; --orbit-period: 10759s; background-image: url('../image/토성.png'); z-index: 10; --height: 34px }
         .uranus { --size: 30px; --orbit-radius: 500px; --orbit-period: 30687s; background-image: url('../image/천왕성.png'); z-index: 10; --height: 30px }
         .neptune { --size: 28px; --orbit-radius: 620px; --orbit-period: 60190s; background-image: url('../image/해왕성.png'); z-index: 10; --height: 28px }
-        /* 하루가 1초 */ 
-        .planet {
-            width: var(--size);
-            height: var(--height);
-            animation: orbit var(--orbit-period) linear infinite;
-        }
-        .planet:hover {
-            background-color: #ffd200;
-        }
 
-
+.sun {
+    transition: transform 0.3s ease;
+}
+        
         .stars {
             position: fixed;
             top: 0;
@@ -91,7 +109,7 @@
             position: fixed;
             bottom: 20px;
             left: 20px;
-            height: 120px;
+            height: 50px;
             background: rgba(0, 0, 0, 0.7);
             padding: 10px;
             border-radius: 5px;
@@ -443,23 +461,28 @@ const commentSection = document.getElementById('commentSection');
         const planetInfo = document.getElementById('planetInfo');
         
         const planetDescriptions = {
-    sun: '태양: 태양계의 중심에 있는 항성입니다.\n태양은 모든 행성의 중력적 중심이며, 지구에 생명을 주는 열과 빛을 제공합니다.',
-    mercury: '수성: 태양에 가장 가까운 행성으로, 공전 주기는 88일입니다.\n지구보다 약 0.38배 작은 크기이며, 대기가 거의 없어 극심한 온도 차이를 보입니다.\n주로 실리카와 금속으로 구성되어 있습니다.',
-    venus: '금성: 두 번째 행성으로, 공전 주기는 225일입니다.\n지구와 비슷한 크기이지만, 지구보다 약 0.95배 작습니다.\n두꺼운 대기 때문에 온실 효과가 심하여 매우 뜨겁고, 주로 이산화탄소로 이루어져 있습니다.',
-    earth: '지구: 인류가 살고 있는 유일한 행성으로, 공전 주기는 365일입니다.\n지구는 지구의 크기와 비슷하며, 액체 상태의 물이 존재하고 다양한 생물들이 서식하고 있습니다.\n주로 질소와 산소로 이루어진 대기를 가지고 있습니다.',
-    mars: '화성: 붉은색으로 빛나는 행성으로, 공전 주기는 687일입니다.\n지구보다 약 0.53배 작고, 과거에 물이 흐른 흔적이 있습니다.\n현재는 극지방에 얼음이 존재하며, 대기는 주로 이산화탄소로 이루어져 있습니다.',
-    jupiter: '목성: 태양계에서 가장 큰 행성으로, 공전 주기는 4333일입니다.\n지구보다 약 11배 크며, 주로 수소와 헬륨으로 이루어져 있습니다.\n강력한 자기장을 가지고 있으며, 수십 개의 위성을 둡니다.',
-    saturn: '토성: 유명한 고리로 둘러싸인 행성으로, 공전 주기는 10759일입니다.\n지구보다 약 9.5배 크고, 고리는 얼음과 암석으로 구성되어 있습니다.\n주로 수소와 헬륨으로 이루어져 있습니다.',
-    uranus: '천왕성: 옅은 파란색의 거대 가스 행성으로, 공전 주기는 30687일입니다.\n지구보다 약 4배 크고, 고유한 기울기를 가지고 있어 옆으로 회전합니다.\n주로 수소, 헬륨 및 메탄으로 이루어져 있습니다.',
-    neptune: '해왕성: 태양계의 가장 바깥쪽에 있는 행성으로, 공전 주기는 60190일입니다.\n지구보다 약 4배 크고, 강한 바람과 폭풍을 지니며, 대기에서 메탄이 함유되어 있어 푸른색을 띕니다.',
+    sun: '태양: 태양계의 중심에 있는 항성입니다.<br>태양은 모든 행성의 중력적 중심이며, 지구에 생명을 주는 열과 빛을 제공합니다.',
+    mercury: '수성: 태양에 가장 가까운 행성으로, 공전 주기는 88일입니다.<br>지구보다 약 0.38배 작은 크기이며, 대기가 거의 없어 극심한 온도 차이를 보입니다.<br>주로 실리카와 금속으로 구성되어 있습니다.',
+    venus: '금성: 두 번째 행성으로, 공전 주기는 225일입니다.<br>지구와 비슷한 크기이지만, 지구보다 약 0.95배 작습니다.<br>두꺼운 대기 때문에 온실 효과가 심하여 매우 뜨겁고, 주로 이산화탄소로 이루어져 있습니다.',
+    earth: '지구: 인류가 살고 있는 유일한 행성으로, 공전 주기는 365일입니다.<br>지구는 지구의 크기와 비슷하며, 액체 상태의 물이 존재하고 다양한 생물들이 서식하고 있습니다.<br>주로 질소와 산소로 이루어진 대기를 가지고 있습니다.',
+    mars: '화성: 붉은색으로 빛나는 행성으로, 공전 주기는 687일입니다.<br>지구보다 약 0.53배 작고, 과거에 물이 흐른 흔적이 있습니다.<br>현재는 극지방에 얼음이 존재하며, 대기는 주로 이산화탄소로 이루어져 있습니다.',
+    jupiter: '목성: 태양계에서 가장 큰 행성으로, 공전 주기는 4333일입니다.<br>지구보다 약 11배 크며, 주로 수소와 헬륨으로 이루어져 있습니다.<br>강력한 자기장을 가지고 있으며, 수십 개의 위성을 둡니다.',
+    saturn: '토성: 유명한 고리로 둘러싸인 행성으로, 공전 주기는 10759일입니다.<br>지구보다 약 9.5배 크고, 고리는 얼음과 암석으로 구성되어 있습니다.<br>주로 수소와 헬륨으로 이루어져 있습니다.',
+    uranus: '천왕성: 옅은 파란색의 거대 가스 행성으로, 공전 주기는 30687일입니다.<br>지구보다 약 4배 크고, 고유한 기울기를 가지고 있어 옆으로 회전합니다.<br>주로 수소, 헬륨 및 메탄으로 이루어져 있습니다.',
+    neptune: '해왕성: 태양계의 가장 바깥쪽에 있는 행성으로, 공전 주기는 60190일입니다.<br>지구보다 약 4배 크고, 강한 바람과 폭풍을 지니며, 대기에서 메탄이 함유되어 있어 푸른색을 띕니다.',
 };
 
 
+function displayDescription(planet) {
+    const planetInfoElement = document.getElementById('planetInfo');
+    planetInfoElement.innerHTML = planetDescriptions[planet];
+}
 
         document.querySelectorAll('.planet, .sun').forEach(planet => {
             planet.addEventListener('click', () => {
                 const planetName = planet.getAttribute('data-planet');
-                planetInfo.textContent = planetDescriptions[planetName];
+                displayDescription(planetName);
+                
                 planetInfo.style.display = 'block';
             });
         });
