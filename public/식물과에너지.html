@@ -699,7 +699,13 @@ window.onload = function() {
             sidebarItems.forEach(item => {
                 item.addEventListener('click', () => {
                     const targetId = item.getAttribute('data-target');
+                    if(targetId=="원소카드")
+                {
+                    window.location.href='/게임/'+targetId;
+                }
+                else{
                     window.location.href='/실험/'+targetId;
+                }
                 });
             });
 
