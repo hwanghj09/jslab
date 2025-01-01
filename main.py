@@ -226,7 +226,7 @@ async def experiment(request: Request, name: str, db: Session = Depends(get_db))
     token_data = {"email": None}
     user_name = None
 
-    # 상위 5개 랭킹 가져오기 (score가 큰 순서로)
+    # 상위 5개 랭킹 가져오기 score가 큰 순서로
     ranks = db.query(RankModel).order_by(RankModel.score.desc()).limit(5).all()
 
     if token:
