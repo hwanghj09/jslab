@@ -1,7 +1,359 @@
-<h1>이걸 속네 ㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋ</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JSLAB</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: auto;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #E5E1DA;
+            display: flex;
+            -ms-overflow-style: none;
+        }
+::-webkit-scrollbar {
+  display: none;
+}
+        .sidebar {
+            width: 200px;
+            background-color: #f4f4f4;
+            color: #000000;
+            position: fixed;
+            top: 0;
+            left: -200px;
+            height: 100%;
+            padding-top: 50px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 100000;
+            transition: left 0.3s ease;
+        }
+        .sidebar-item {
+            padding: 15px 10px;
+            text-align: center;
+            cursor: pointer;
+            width: 100%;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+        .sidebar-item:hover {
+            background-color: #dedede;
+
+        }
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #E5E1DA;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: height 0.5s ease-in-out;
+            border: 1.5px solid #6d6b65;
+        }
+        .jslab-title {
+            font-size: 4em;
+            font-weight: bold;
+            opacity: 0;
+            animation: revealText 0.5s forwards;
+            cursor: pointer;
+        }
+        .menu-icon, .login-icon {
+            position: absolute;
+            top: 10px;
+            font-size: 2em;
+            cursor: pointer;
+            opacity: 0;
+            animation: fadeIn 1s forwards 1s;
+        }
+        .menu-icon {
+            left: 20px;
+            font-size: 3em;
+        }
+        .login-icon {
+            color: rgb(159, 159, 159);
+            right: 20px;
+            top: 20px;
+        }
+        .login-icon:hover{
+            color: black;
+        }
+        .header {
+            width: 100%;
+            background-color: #fffdfd;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.5s ease-in-out;
+        }
+        .container {
+            display: grid;
+            width: 90%;
+            padding: 20px;
+            margin-top: 150px;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            justify-content: center;       
+        }
+        .card {
+            border: 1.5px solid #6d6b65;
+    border-radius: 8px;
+    padding: 20px;
+    position: relative;
+    background-color: #eee9e2;
+    height: 150px;
+    transition: box-shadow 0.3s, opacity 0.5s;
+    transition: transform 0.3s;
+    opacity: 0;
+    box-shadow: 0 5px 8px rgba(0,0,0,0.15);
+    display: flex;
+    font-size: 1.25em;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.card.visible {
+    opacity: 1;
+}
+
+.card img {
+    position: absolute;
+    border-radius: 8px;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    transition: opacity 0.2s ease-in-out; /* 이미지 페이드 인 효과 */
+}
+
+.card:hover img {
+    opacity: 1;
+}
+
+.card:hover {
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    background-color: rgb(248, 246, 246);
+    transform: translateY(-10px);
+}
+
+
+        .card-title {
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+        @keyframes revealText {
+            0% {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        @keyframes shrinkOverlay {
+            0% {
+                height: 100%;
+            }
+            100% {
+                height: 10%;
+                font-size: 10px;
+            }
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="sidebar-item" data-target="불꽃실험">불꽃실험</div>
+        <div class="sidebar-item" data-target="전기회로">전기회로</div>
+        <div class="sidebar-item" data-target="태양계">태양계</div>
+        <div class="sidebar-item" data-target="식물과에너지">식물과에너지</div>
+        <div class="sidebar-item" data-target="용해도">용해도</div>
+        <div class="sidebar-item"  data-target="포물선운동">포물선운동</div>
+        <div class="sidebar-item" data-target="발전기">발전기</div>
+        <div class="sidebar-item" data-target="자유낙하실험">자유낙하실험</div>
+        <div class="sidebar-item" data-target="원소카드">원소카드</div>
+    </div>
+
+    <div class="main-content">
+        <div class="header">
+            <div class="overlay">
+                <div class="jslab-title" onclick="window.location.href='/index'">JSLAB</div>
+                <div class="menu-icon" aria-label="Menu">☰</div>
+                {% if islogin == False %}
+                <div class="login-icon" onclick="window.location.href='/login'">login / sign up</div>
+                {% else %}
+                <div class="login-icon logout" onclick="window.location.href='/logout'">logout</div>
+                {% endif %}
+            </div>
+        </div>
+        <div class="container">
+            <div class="card fire" id="불꽃실험" onclick="window.location.href='/실험/불꽃실험'">
+                <img src="../image/불꽃실험.png" alt="불꽃실험">
+                <div class="card-title">불꽃실험</div>
+            </div>
+            <div class="card circuit" id="전기회로" onclick="window.location.href='/실험/전기회로'">
+                <img src="../image/전기회로.png" alt="전기회로">
+                <div class="card-title">전기회로</div>
+            </div>
+            <div class="card solar" id="태양계" onclick="window.location.href='/실험/태양계'">
+                <img src="../image/태양계.png" alt="전기회로">
+                <div class="card-title">태양계</div>
+            </div>
+            <div class="card plants" id="식물과에너지" onclick="window.location.href='/실험/식물과에너지'">
+                <img src="../image/식물과에너지.png" alt="식물과에너지">
+                <div class="card-title">식물과에너지</div>
+            </div>
+            <div class="card solubility" id="용해도" onclick="window.location.href='/실험/용해도'">
+                <img src="../image/용해도.png" alt="용해도">
+                <div class="card-title">용해도</div>
+            </div>
+            <div class="card giche" id="포물선운동" onclick="window.location.href='/실험/포물선운동'">
+                <img src="../image/포물선운동.png" alt="포물선운동">
+                <div class="card-title">포물선운동</div>
+            </div>
+            <div class="card baljungi" id="발전기" onclick="window.location.href='/실험/발전기'">
+                <img src="../image/발전기.png" alt="발전기">
+                <div class="card-title">발전기</div>
+            </div>
+            <div class="card" id="자유낙하실험" onclick="window.location.href='/실험/자유낙하실험'">
+                <img src="../image/자유낙하실험.png" alt="자유낙하실험">
+                <div class="card-title">자유낙하실험</div>
+            </div>
+            <div class="card" id="원소카드" onclick="window.location.href='/게임/원소카드'">
+                <img src="../image/원소카드.png" alt="원소카드">
+                <div class="card-title">원소카드</div>
+            </div>
+        </div>
         <ins class="kakao_ad_area" style="display:none;"
 data-ad-unit = "DAN-vLGbpSb4iusGUPk6"
 data-ad-width = "728"
 data-ad-height = "90"></ins>
 <script type="text/javascript" src="//t1.daumcdn.net/kas/static/ba.min.js" async></script>
+    </div>
 
+    <script>
+        // Trigger shrinking effect and reveal content after animation ends
+        document.querySelector('.jslab-title').addEventListener('animationend', () => {
+            document.querySelector('.overlay').style.animation = 'shrinkOverlay 0.5s forwards';
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            let lastScrollTop = 0;
+            let sidebarFixed = false; // Flag to indicate if sidebar is fixed
+
+            // 카드 요소를 선택
+            const cards = document.querySelectorAll('.card');
+
+            // Intersection Observer 설정
+            const options = {
+                root: null, // viewport
+                threshold: 0.2 // 20%가 보일 때 콜백 호출
+            };
+
+            const observerCallback = (entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        // 카드가 보일 때 visible 클래스 추가
+                        entry.target.classList.add('visible');
+                        observer.unobserve(entry.target); // 더 이상 관찰하지 않음
+                    }
+                });
+            };
+
+            const observer = new IntersectionObserver(observerCallback, options);
+
+            // 각 카드에 대해 Observer 등록
+            cards.forEach(card => {
+                observer.observe(card);
+            });
+
+            // 사이드바 클릭 시 해당 카드로 스크롤
+            const sidebarItems = document.querySelectorAll('.sidebar-item');
+            sidebarItems.forEach(item => {
+                item.addEventListener('click', () => {
+                    const targetId = item.getAttribute('data-target');
+                    if(targetId=="원소카드")
+                {
+                    window.location.href='/게임/'+targetId;
+                }
+                else{
+                    window.location.href='/실험/'+targetId;
+                }
+
+                });
+            });
+
+            // Menu-icon hover 시 사이드바 보여줌
+            const menuIcon = document.querySelector('.menu-icon');
+            const sidebar = document.querySelector('.sidebar');
+
+            menuIcon.addEventListener('mouseover', () => {
+                if (!sidebarFixed) { // Sidebar가 고정되지 않은 경우에만 작동
+                    sidebar.style.left = '0px'; // Show sidebar on hover
+                }
+            });
+
+            sidebar.addEventListener('mouseleave', () => {
+                if (!sidebarFixed) { // Sidebar가 고정되지 않은 경우에만 작동
+                    sidebar.style.left = '-200px'; // Hide sidebar when mouse leaves
+                }
+            });
+
+            // Menu-icon 클릭 시 사이드바 고정/해제
+            menuIcon.addEventListener('click', () => {
+                sidebarFixed = !sidebarFixed; // Toggle fixed state
+                if (sidebarFixed) {
+                    sidebar.style.left = '0px'; // Show sidebar
+                } else {
+                    sidebar.style.left = '-200px'; // Hide sidebar
+                }
+            });
+
+            // 스크롤 이벤트 처리
+            window.addEventListener('scroll', function() {
+                let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                if (scrollTop > lastScrollTop && scrollTop > 100) {
+                    document.querySelector('.overlay').style.opacity = '0';
+                } else {
+                    document.querySelector('.overlay').style.opacity = '1';
+                }
+                lastScrollTop = scrollTop <= 0 ? 0 : scrollTop; // 모바일이나 음수 스크롤 방지
+            });
+        });
+    </script>
+</body>
+</html>
